@@ -437,10 +437,10 @@ export default function RcaClient({ userName }: { userName: string }) {
         </button>
       </div>
 
-    <div className="flex flex-1 overflow-hidden">
+    <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
 
       {/* ━━━ LEFT PANEL (70%) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <div className="flex flex-col border-r border-slate-800/80" style={{ width: '70%' }}>
+      <div className="flex flex-col w-full md:flex-[7] border-r-0 md:border-r border-b md:border-b-0 border-slate-800/80">
 
         {/* LEFT TOP: Ishikawa + info */}
         <div
@@ -476,7 +476,7 @@ export default function RcaClient({ userName }: { userName: string }) {
           )}
 
           {/* Ishikawa SVG */}
-          <div className="flex-1" style={{ minHeight: 220 }}>
+          <div className="flex-1 min-h-[160px] md:min-h-[220px]">
             <IshikawaChart
               event={w5h2.what}
               ishikawa={ishikawa}
@@ -563,7 +563,7 @@ export default function RcaClient({ userName }: { userName: string }) {
       </div>
 
       {/* ━━━ RIGHT PANEL (30%) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <div className="flex flex-col overflow-hidden" style={{ width: '30%' }}>
+      <div className="flex flex-col w-full md:flex-[3] border-t border-slate-700/40 md:border-t-0 overflow-hidden">
 
         {/* RIGHT TOP (35%): Step progress */}
         <div className="flex flex-col p-3 border-b border-slate-800" style={{ height: '35%' }}>
@@ -784,21 +784,23 @@ export default function RcaClient({ userName }: { userName: string }) {
               {step > 1 && (
                 <button
                   onClick={() => setStep((s) => (s - 1) as StepNum)}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-700
+                  className="flex items-center gap-1 px-2.5 py-1.5 md:px-3 md:py-2 rounded-xl border border-slate-700
                              hover:border-slate-600 text-slate-400 hover:text-slate-200 text-xs transition-colors"
                 >
-                  <ChevronLeft className="w-3.5 h-3.5" /> Atrás
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Atrás</span>
                 </button>
               )}
               {step < 5 && (
                 <button
                   onClick={() => { if (canAdvance()) setStep((s) => (s + 1) as StepNum) }}
                   disabled={!canAdvance()}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl
+                  className="flex-1 flex items-center justify-center gap-1 md:gap-1.5 px-2.5 py-1.5 md:px-3 md:py-2 rounded-xl
                              bg-sky-600 hover:bg-sky-500 disabled:opacity-40
                              disabled:cursor-not-allowed text-white text-xs font-medium transition-colors"
                 >
-                  Siguiente <ChevronRight className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Siguiente</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               )}
               {step === 5 && null}

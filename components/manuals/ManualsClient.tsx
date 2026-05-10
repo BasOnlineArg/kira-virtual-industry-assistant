@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { MessageSquare, BookOpen } from 'lucide-react'
+import { MessageSquare, BookOpen, Library, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import ManualLibraryPanel from './ManualLibraryPanel'
 import ChatPanel from './ChatPanel'
@@ -16,9 +16,10 @@ interface Props {
 type ActiveTab = 'chat' | 'viewer'
 
 export default function ManualsClient({ initialManuals, initialSessions }: Props) {
-  const [manuals,     setManuals]     = useState<Manual[]>(initialManuals)
-  const [selectedDoc, setSelectedDoc] = useState<Manual | null>(null)
-  const [activeTab,   setActiveTab]   = useState<ActiveTab>('chat')
+  const [manuals,      setManuals]      = useState<Manual[]>(initialManuals)
+  const [selectedDoc,  setSelectedDoc]  = useState<Manual | null>(null)
+  const [activeTab,    setActiveTab]    = useState<ActiveTab>('chat')
+  const [showLibrary,  setShowLibrary]  = useState(false)
 
   const handleSelectDoc = useCallback((m: Manual) => {
     setSelectedDoc(m)
@@ -59,14 +60,42 @@ export default function ManualsClient({ initialManuals, initialSessions }: Props
   }, [])
 
   return (
-    <div className="flex gap-4 h-full min-h-0">
+    <div className="flex gap-4 h-full min-h-0 relative">
+
+      {/* ── Mobile backdrop ──────────────────────────────────────────────── */}
+      {showLibrary && (
+        <div
+          className="fixed inset-0 z-20 bg-black/50 md:hidden"
+          onClick={() => setShowLibrary(false)}
+        />
+      )}
 
       {/* ── LEFT: Library panel ─────────────────────────────────────────── */}
-      <div className="w-64 xl:w-72 shrink-0 overflow-hidden flex flex-col">
+      {/* Mobile: fixed overlay from the left; md+: static sidebar */}
+      <div
+        className={cn(
+          'shrink-0 overflow-hidden flex flex-col',
+          // Mobile
+          'fixed top-0 left-0 h-full w-72 z-30 transition-transform duration-300 md:hidden',
+          showLibrary ? 'translate-x-0' : '-translate-x-full',
+          // md+
+          'md:static md:translate-x-0 md:w-64 xl:md:w-72 md:h-auto md:z-auto md:transition-none',
+        )}
+      >
+        {/* Mobile close button row */}
+        <div className="flex items-center justify-end px-3 pt-3 md:hidden">
+          <button
+            onClick={() => setShowLibrary(false)}
+            className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 rounded-lg transition-colors"
+            title="Cerrar biblioteca"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
         <ManualLibraryPanel
           manuals={manuals}
           selectedId={selectedDoc?.id ?? null}
-          onSelect={handleSelectDoc}
+          onSelect={(m) => { handleSelectDoc(m); setShowLibrary(false) }}
           onDelete={handleDelete}
           onNewManual={handleNewManual}
         />
@@ -77,6 +106,20 @@ export default function ManualsClient({ initialManuals, initialSessions }: Props
 
         {/* Tab bar */}
         <div className="flex shrink-0 border-b border-slate-700/50">
+          {/* Mobile: Biblioteca toggle button */}
+          <button
+            onClick={() => setShowLibrary((v) => !v)}
+            className={cn(
+              'md:hidden flex items-center gap-2 px-4 py-3 text-xs font-medium border-b-2 transition-colors',
+              showLibrary
+                ? 'border-sky-500 text-sky-300'
+                : 'border-transparent text-slate-500 hover:text-slate-300',
+            )}
+          >
+            <Library className="w-3.5 h-3.5" />
+            Biblioteca
+          </button>
+
           <button
             onClick={() => setActiveTab('chat')}
             className={cn(

@@ -227,9 +227,9 @@ export default function SkfClient({ initialHistory }: SkfClientProps) {
   const canAnalyze = !!tag.trim() && points.length > 0 && !analyzing
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 h-full">
+    <div className="flex flex-col md:flex-row gap-6 h-full">
       {/* ── LEFT PANEL ── */}
-      <div className="lg:w-80 xl:w-96 flex-shrink-0 space-y-4">
+      <div className="w-full md:w-80 xl:w-96 flex-shrink-0 space-y-4">
 
         {/* Dropzone */}
         <div className="bg-slate-800/40 border border-slate-700/30 rounded-2xl p-4">
@@ -354,7 +354,7 @@ export default function SkfClient({ initialHistory }: SkfClientProps) {
           ))}
         </div>
 
-        <div className="bg-slate-800/40 border border-slate-700/30 rounded-2xl p-4 overflow-y-auto">
+        <div className="bg-slate-800/40 border border-slate-700/30 rounded-2xl p-4 overflow-x-auto overflow-y-auto min-h-64">
           {/* Measurements tab */}
           {rightTab === 'measurements' && (
             points.length > 0 ? (
@@ -365,7 +365,7 @@ export default function SkfClient({ initialHistory }: SkfClientProps) {
                 fecha={parsedFecha}
               />
             ) : (
-              <div className="flex flex-col items-center gap-3 py-20 text-slate-600">
+              <div className="flex flex-col items-center gap-3 py-10 md:py-20 text-slate-600">
                 <div className="w-12 h-12 rounded-xl bg-[#005CB9]/20 flex items-center justify-center">
                   <span className="text-sm font-black text-[#005CB9]/60">SKF</span>
                 </div>
@@ -379,7 +379,7 @@ export default function SkfClient({ initialHistory }: SkfClientProps) {
             result ? (
               <SkfResult result={result} />
             ) : (
-              <div className="flex flex-col items-center gap-3 py-20 text-slate-600">
+              <div className="flex flex-col items-center gap-3 py-10 md:py-20 text-slate-600">
                 <FileSearch className="w-10 h-10" />
                 <p className="text-sm">
                   {points.length > 0

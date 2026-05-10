@@ -64,7 +64,7 @@ export default function OtKpiBar({ orders }: OtKpiBarProps) {
   ]
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">
       {cards.map((c) => (
         <div key={c.label} className={cn('rounded-2xl border border-slate-700/40 p-4', c.bg)}>
           <div className="flex items-center justify-between mb-1">

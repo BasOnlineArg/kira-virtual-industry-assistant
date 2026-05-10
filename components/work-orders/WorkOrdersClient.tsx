@@ -139,9 +139,9 @@ export default function WorkOrdersClient({ initialOrders }: Props) {
       <OtKpiBar orders={filtered} />
 
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-3">
-        {/* Search */}
-        <div className="relative flex-1 min-w-[200px]">
+      <div className="flex flex-col gap-2">
+        {/* Row 1: search full width */}
+        <div className="relative w-full">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500 pointer-events-none" />
           <input
             className="w-full pl-8 pr-8 py-2 rounded-xl bg-slate-800/60 border border-slate-700/50
@@ -157,48 +157,53 @@ export default function WorkOrdersClient({ initialOrders }: Props) {
           )}
         </div>
 
-        {/* Status filter chips */}
-        <div className="flex gap-1">
-          {STATUS_FILTERS.map((f) => {
-            const active = statusFilter === f.value
-            const cfg = f.value !== 'all' ? STATUS_CONFIG[f.value] : null
-            return (
-              <button
-                key={f.value}
-                onClick={() => setStatus(f.value)}
-                className={cn(
-                  'px-2.5 py-1.5 rounded-lg border text-[11px] font-medium transition-colors',
-                  active
-                    ? cfg ? cn(cfg.bg, cfg.color, cfg.border) : 'bg-slate-700 text-slate-200 border-slate-600'
-                    : 'border-slate-700/50 text-slate-500 hover:text-slate-300 bg-slate-900/30',
-                )}
-              >
-                {f.label}
-              </button>
-            )
-          })}
-        </div>
+        {/* Row 2: chips (scrollable) + action buttons */}
+        <div className="flex items-center gap-2 min-w-0">
+          {/* Status filter chips — horizontal scroll on mobile */}
+          <div className="flex-1 overflow-x-auto min-w-0">
+            <div className="flex gap-1 flex-nowrap">
+              {STATUS_FILTERS.map((f) => {
+                const active = statusFilter === f.value
+                const cfg = f.value !== 'all' ? STATUS_CONFIG[f.value] : null
+                return (
+                  <button
+                    key={f.value}
+                    onClick={() => setStatus(f.value)}
+                    className={cn(
+                      'px-2.5 py-1.5 rounded-lg border text-[11px] font-medium transition-colors whitespace-nowrap',
+                      active
+                        ? cfg ? cn(cfg.bg, cfg.color, cfg.border) : 'bg-slate-700 text-slate-200 border-slate-600'
+                        : 'border-slate-700/50 text-slate-500 hover:text-slate-300 bg-slate-900/30',
+                    )}
+                  >
+                    {f.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
 
-        {/* Actions */}
-        <div className="flex gap-2 ml-auto">
-          <button
-            onClick={() => setShowXlsx(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-700
-                       text-xs text-slate-300 hover:text-white hover:border-emerald-500/50
-                       hover:bg-emerald-500/10 transition-colors"
-          >
-            <FileSpreadsheet className="w-3.5 h-3.5" />
-            Importar XLSX
-          </button>
-          <button
-            onClick={() => setShowForm(true)}
-            disabled={saving}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-600
-                       hover:bg-blue-500 text-white text-xs font-semibold transition-colors disabled:opacity-50"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            Nueva OT
-          </button>
+          {/* Actions */}
+          <div className="flex gap-2 shrink-0">
+            <button
+              onClick={() => setShowXlsx(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-700
+                         text-xs text-slate-300 hover:text-white hover:border-emerald-500/50
+                         hover:bg-emerald-500/10 transition-colors whitespace-nowrap"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Importar XLSX</span>
+            </button>
+            <button
+              onClick={() => setShowForm(true)}
+              disabled={saving}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-600
+                         hover:bg-blue-500 text-white text-xs font-semibold transition-colors disabled:opacity-50 whitespace-nowrap"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Nueva OT</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -210,7 +215,7 @@ export default function WorkOrdersClient({ initialOrders }: Props) {
       )}
 
       {/* Table */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-x-auto overflow-y-auto">
         <OtTable
           orders={filtered}
           onUpdate={handleUpdate}

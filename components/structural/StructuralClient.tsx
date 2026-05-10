@@ -161,10 +161,10 @@ export default function StructuralClient({ initialHistory, initialReports }: Pro
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 h-full">
+    <div className="flex flex-col md:flex-row gap-6 h-full">
 
       {/* ── LEFT PANEL ── */}
-      <div className="lg:w-80 xl:w-96 flex-shrink-0 space-y-4 overflow-y-auto pb-4">
+      <div className="w-full md:w-80 xl:w-96 flex-shrink-0 space-y-4 overflow-y-auto pb-4">
 
         {/* Identification */}
         <div className="bg-slate-800/40 border border-slate-700/30 rounded-2xl p-4 space-y-3">
@@ -355,11 +355,11 @@ export default function StructuralClient({ initialHistory, initialReports }: Pro
 
       {/* ── RIGHT PANEL ── */}
       <div className="flex-1 min-w-0 flex flex-col">
-        <div className="flex gap-1 mb-4 bg-slate-800/40 border border-slate-700/30 rounded-xl p-1 shrink-0 w-fit">
+        <div className="flex gap-1 mb-4 bg-slate-800/40 border border-slate-700/30 rounded-xl p-1 shrink-0 w-full md:w-fit overflow-x-auto">
           {RIGHT_TABS.map((t) => (
             <button key={t.id} onClick={() => setRightTab(t.id)}
               className={cn(
-                'flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-lg transition-colors',
+                'flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-lg transition-colors whitespace-nowrap flex-1 md:flex-none justify-center',
                 rightTab === t.id ? 'bg-sky-600 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50',
               )}>
               <t.icon className="w-3.5 h-3.5" />
@@ -368,7 +368,7 @@ export default function StructuralClient({ initialHistory, initialReports }: Pro
           ))}
         </div>
 
-        <div className="flex-1 bg-slate-800/40 border border-slate-700/30 rounded-2xl p-4 overflow-y-auto">
+        <div className="flex-1 min-h-64 bg-slate-800/40 border border-slate-700/30 rounded-2xl p-4 overflow-x-auto overflow-y-auto">
           {rightTab === 'history' && (
             <InspectionHistory rows={history} onSelect={() => {}} />
           )}

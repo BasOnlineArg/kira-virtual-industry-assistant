@@ -137,7 +137,7 @@ export default function RepuestosTab({ initialItems }: { initialItems: Repuesto[
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 w-full max-w-lg shadow-xl flex flex-col gap-4">
             <h3 className="text-base font-semibold text-slate-100">Nuevo repuesto</h3>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
                 { key: 'codigo_sap',  label: 'Código SAP',   placeholder: 'Ej: 10023456', full: false },
                 { key: 'unidad',      label: 'Unidad',        placeholder: 'Ej: UN, KG, M', full: false },

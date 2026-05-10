@@ -1,6 +1,6 @@
 'use client'
 
-import { PlusCircle, MessageSquare, Trash2 } from 'lucide-react'
+import { PlusCircle, MessageSquare, Trash2, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface Session {
@@ -32,6 +32,8 @@ interface SessionsSidebarProps {
   onNewSession: () => void
   onSelectSession: (id: string) => void
   onDeleteSession: (id: string) => void
+  isOpen?: boolean
+  onClose?: () => void
 }
 
 export default function SessionsSidebar({
@@ -40,14 +42,43 @@ export default function SessionsSidebar({
   onNewSession,
   onSelectSession,
   onDeleteSession,
+  isOpen = false,
+  onClose,
 }: SessionsSidebarProps) {
   return (
-    <aside className="w-60 flex-shrink-0 bg-slate-900/60 border-l border-slate-700/40 flex flex-col">
+    <>
+      {/* Mobile backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-20 bg-black/50 md:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      <aside
+        className={cn(
+          'bg-slate-900/60 border-l border-slate-700/40 flex flex-col',
+          // Mobile: fixed overlay from the right, toggled by isOpen
+          'fixed top-0 right-0 h-full w-72 z-30 transition-transform duration-300 md:hidden',
+          isOpen ? 'translate-x-0' : 'translate-x-full',
+          // md+: static sidebar, always visible
+          'md:static md:translate-x-0 md:w-60 md:flex-shrink-0 md:h-auto md:z-auto md:transition-none',
+        )}
+      >
       {/* Header */}
       <div className="px-3 py-4 border-b border-slate-700/40">
-        <p className="text-[10px] font-semibold text-slate-600 tracking-widest uppercase px-1 mb-2">
-          Sesiones
-        </p>
+        <div className="flex items-center justify-between px-1 mb-2">
+          <p className="text-[10px] font-semibold text-slate-600 tracking-widest uppercase">
+            Sesiones
+          </p>
+          <button
+            onClick={onClose}
+            className="md:hidden p-1 text-slate-500 hover:text-slate-300 transition-colors rounded"
+            title="Cerrar"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
         <button
           onClick={onNewSession}
           className="w-full flex items-center gap-2 px-3 py-2 bg-sky-600 hover:bg-sky-500
@@ -118,5 +149,6 @@ export default function SessionsSidebar({
         </p>
       </div>
     </aside>
+    </>
   )
 }

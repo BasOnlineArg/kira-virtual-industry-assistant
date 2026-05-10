@@ -111,7 +111,7 @@ export default async function DashboardPage() {
   const otsVencidas = workOrders.filter((o) => o.status === 'en_proceso' && o.fecha < today).length
 
   return (
-    <div className="flex flex-col gap-6 pb-6">
+    <div className="flex flex-col gap-6 pb-6 px-4 md:px-6">
       {/* Header */}
       <div className="shrink-0">
         <h1 className="text-2xl font-bold text-slate-100">Dashboard</h1>

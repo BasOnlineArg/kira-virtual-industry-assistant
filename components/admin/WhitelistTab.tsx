@@ -100,32 +100,34 @@ export default function WhitelistTab({ initialList }: { initialList: WhitelistEn
       </div>
 
       {/* List */}
-      <div className="flex flex-col gap-2">
-        {list.length === 0 && (
-          <p className="text-sm text-slate-500 text-center py-8">Whitelist vacía — ningún email autorizado.</p>
-        )}
-        {list.map((entry) => (
-          <div
-            key={entry.id}
-            className="flex items-center gap-3 rounded-xl border border-slate-700/40 bg-slate-800/30 px-4 py-2.5"
-          >
-            <Mail className="w-4 h-4 text-slate-500 shrink-0" />
-            <span className="flex-1 text-sm text-slate-300 truncate">{entry.email}</span>
-            <span className={cn('rounded-full px-2 py-0.5 text-[10px] font-medium shrink-0', ROLE_STYLES[entry.role_default])}>
-              {entry.role_default}
-            </span>
-            <span className="text-[11px] text-slate-600 shrink-0">
-              {new Date(entry.created_at).toLocaleDateString('es-AR', { day: '2-digit', month: 'short' })}
-            </span>
-            <button
-              onClick={() => handleDelete(entry.id, entry.email)}
-              disabled={deleting === entry.id}
-              className="shrink-0 p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+      <div className="overflow-x-auto">
+        <div className="flex flex-col gap-2 min-w-[320px]">
+          {list.length === 0 && (
+            <p className="text-sm text-slate-500 text-center py-8">Whitelist vacía — ningún email autorizado.</p>
+          )}
+          {list.map((entry) => (
+            <div
+              key={entry.id}
+              className="flex items-center gap-3 rounded-xl border border-slate-700/40 bg-slate-800/30 px-4 py-2.5"
             >
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        ))}
+              <Mail className="w-4 h-4 text-slate-500 shrink-0" />
+              <span className="flex-1 text-sm text-slate-300 truncate">{entry.email}</span>
+              <span className={cn('rounded-full px-2 py-0.5 text-[10px] font-medium shrink-0', ROLE_STYLES[entry.role_default])}>
+                {entry.role_default}
+              </span>
+              <span className="text-[11px] text-slate-600 shrink-0">
+                {new Date(entry.created_at).toLocaleDateString('es-AR', { day: '2-digit', month: 'short' })}
+              </span>
+              <button
+                onClick={() => handleDelete(entry.id, entry.email)}
+                disabled={deleting === entry.id}
+                className="shrink-0 p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
     </div>

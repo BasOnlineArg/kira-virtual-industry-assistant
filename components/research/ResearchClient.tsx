@@ -25,6 +25,7 @@ export default function ResearchClient({ initialSessions }: ResearchClientProps)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isLoadingSession, setIsLoadingSession] = useState(false)
   const [isWaitingForKira, setIsWaitingForKira] = useState(false)
+  const [showSessions, setShowSessions] = useState(false)
 
   const supabase = createClient()
 
@@ -158,6 +159,7 @@ export default function ResearchClient({ initialSessions }: ResearchClientProps)
         sessionTitle={activeTitle}
         onSendMessage={handleSendMessage}
         onRenameSession={handleRenameSession}
+        onToggleSessions={() => setShowSessions((v) => !v)}
       />
       {/* Sesiones — panel derecho */}
       <SessionsSidebar
@@ -166,6 +168,8 @@ export default function ResearchClient({ initialSessions }: ResearchClientProps)
         onNewSession={handleNewSession}
         onSelectSession={handleSelectSession}
         onDeleteSession={handleDeleteSession}
+        isOpen={showSessions}
+        onClose={() => setShowSessions(false)}
       />
     </div>
   )

@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
-import { Layers, Plus, X } from 'lucide-react'
+import { Layers, Plus, X, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import AssetList from './AssetList'
 import AssetDetailPanel from './AssetDetailPanel'
@@ -30,12 +30,13 @@ interface PendingCoords {
 }
 
 export default function KiraMap({ assets: initialAssets }: KiraMapProps) {
-  const [assets,     setAssets]     = useState<Asset[]>(initialAssets)
-  const [capa,       setCapa]       = useState<Capa>('superficie')
-  const [activeMine, setActiveMine] = useState<MineId>('mariana_central')
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [placeMode,  setPlaceMode]  = useState(false)
-  const [pending,    setPending]    = useState<PendingCoords | null>(null)
+  const [assets,      setAssets]      = useState<Asset[]>(initialAssets)
+  const [capa,        setCapa]        = useState<Capa>('superficie')
+  const [activeMine,  setActiveMine]  = useState<MineId>('mariana_central')
+  const [selectedId,  setSelectedId]  = useState<string | null>(null)
+  const [placeMode,   setPlaceMode]   = useState(false)
+  const [pending,     setPending]     = useState<PendingCoords | null>(null)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const visibleAssets = useMemo(() => {
     if (capa === 'superficie') return assets.filter((a) => a.capa === 'superficie')
@@ -81,10 +82,10 @@ export default function KiraMap({ assets: initialAssets }: KiraMapProps) {
   }
 
   return (
-    <div className="flex h-full min-h-0 bg-slate-900 rounded-2xl overflow-hidden border border-slate-800">
+    <div className="flex flex-col md:flex-row h-full min-h-0 bg-slate-900 rounded-2xl overflow-hidden border border-slate-800">
 
       {/* ── LEFT SIDEBAR ── */}
-      <div className="w-[260px] shrink-0 flex flex-col bg-slate-900 border-r border-slate-800 overflow-hidden">
+      <div className="shrink-0 flex flex-col bg-slate-900 border-b md:border-b-0 md:border-r border-slate-800 md:w-[260px] overflow-hidden">
 
         {/* Logo header */}
         <div className="shrink-0 px-4 py-3 border-b border-slate-800">
@@ -95,12 +96,26 @@ export default function KiraMap({ assets: initialAssets }: KiraMapProps) {
                 <path d="M13.5 2.5L6 10 2.5 6.5 1 8l5 5 9-9z" />
               </svg>
             </div>
-            <p className="text-sm font-bold">
+            <p className="text-sm font-bold flex-1">
               <span style={{ color: '#1D9E75' }}>Kira</span>
               <span className="text-slate-200"> Inspector</span>
             </p>
+            {/* Mobile toggle */}
+            <button
+              onClick={() => setSidebarOpen((v) => !v)}
+              className="md:hidden p-1 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-700 transition-colors"
+              aria-label="Alternar panel"
+            >
+              {sidebarOpen
+                ? <ChevronUp className="w-4 h-4" />
+                : <ChevronDown className="w-4 h-4" />
+              }
+            </button>
           </div>
         </div>
+
+        {/* Collapsible content on mobile */}
+        <div className={cn('flex flex-col overflow-hidden md:flex-1 md:min-h-0', sidebarOpen ? 'flex-1 min-h-0' : 'hidden md:flex md:flex-col md:flex-1 md:min-h-0')}>
 
         {/* Layer tabs */}
         <div className="shrink-0 p-3 border-b border-slate-800">
@@ -158,10 +173,12 @@ export default function KiraMap({ assets: initialAssets }: KiraMapProps) {
             onSelect={handleSelect}
           />
         </div>
+
+        </div>{/* end collapsible */}
       </div>
 
       {/* ── CENTER MAP ── */}
-      <div className="flex-1 min-w-0 relative overflow-hidden">
+      <div className="flex-1 min-w-0 relative overflow-hidden h-[50vh] md:h-full">
         {capa === 'superficie' ? (
           <SurfaceMap
             assets={visibleAssets}

@@ -126,9 +126,9 @@ export default function VisualInspectionClient({ initialHistory }: VisualInspect
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex h-full gap-0 overflow-hidden">
+    <div className="flex flex-col md:flex-row h-full gap-0 overflow-hidden">
       {/* ── LEFT PANEL: Form ─────────────────────────────────────────── */}
-      <div className="w-96 flex-shrink-0 border-r border-slate-700/40 flex flex-col overflow-y-auto">
+      <div className="w-full md:w-96 flex-shrink-0 border-b md:border-b-0 md:border-r border-slate-700/40 flex flex-col overflow-y-auto">
         <div className="p-6 space-y-5">
           <div>
             <h2 className="text-sm font-semibold text-slate-300 mb-1">Imagen</h2>
@@ -207,7 +207,7 @@ export default function VisualInspectionClient({ initialHistory }: VisualInspect
       </div>
 
       {/* ── RIGHT PANEL: Result + History ────────────────────────────── */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
         {/* Tabs */}
         <div className="flex border-b border-slate-700/40 px-6 pt-4 flex-shrink-0">
           {(
@@ -233,7 +233,7 @@ export default function VisualInspectionClient({ initialHistory }: VisualInspect
         </div>
 
         {/* Tab content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 min-h-64 overflow-y-auto p-4 md:p-6">
           {activeTab === 'resultado' ? (
             result ? (
               <DiagnosisResult result={result} observation={observation || undefined} />

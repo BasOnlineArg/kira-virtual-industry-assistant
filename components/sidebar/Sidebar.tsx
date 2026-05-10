@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -21,6 +21,7 @@ import {
   User,
   PanelLeftClose,
   PanelLeftOpen,
+  X,
   type LucideIcon,
 } from 'lucide-react'
 import { logout } from '@/app/actions/auth'
@@ -33,7 +34,7 @@ interface NavItem {
   href:           string
   label:          string
   icon:           LucideIcon
-  superusuario?:  boolean   // solo visible para superusuario
+  superusuario?:  boolean
 }
 
 const navGroups: { label: string; items: NavItem[] }[] = [
@@ -59,37 +60,40 @@ const navGroups: { label: string; items: NavItem[] }[] = [
   {
     label: 'SISTEMA',
     items: [
-      { href: '/manuals',    label: 'Biblioteca Manuales',      icon: BookOpen },
+      { href: '/manuals',    label: 'Biblioteca Manuales',       icon: BookOpen },
       { href: '/auxiliares', label: 'Datos y Tablas Auxiliares', icon: Database },
-      { href: '/dashboard',  label: 'Dashboard',                 icon: LayoutDashboard },
-      { href: '/admin',      label: 'Administración',            icon: Settings, superusuario: true },
+      { href: '/dashboard',  label: 'Dashboard',                  icon: LayoutDashboard },
+      { href: '/admin',      label: 'Administración',             icon: Settings, superusuario: true },
     ],
   },
 ]
 
-// allNavItems se filtra en el componente según el rol del usuario
-
 const roleLabels: Record<string, string> = {
   superusuario: 'Superusuario',
-  inspector: 'Inspector',
-  supervisor: 'Supervisor',
+  inspector:    'Inspector',
+  supervisor:   'Supervisor',
 }
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 interface SidebarProps {
-  user: Pick<KiraUser, 'name' | 'role' | 'email'> | null
+  user:           Pick<KiraUser, 'name' | 'role' | 'email'> | null
+  isMobileOpen?:  boolean
+  onMobileClose?: () => void
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function Sidebar({ user }: SidebarProps) {
-  const pathname   = usePathname()
+export default function Sidebar({ user, isMobileOpen = false, onMobileClose }: SidebarProps) {
+  const pathname       = usePathname()
   const [collapsed, setCollapsed] = useState(false)
-
   const isSuperusuario = user?.role === 'superusuario'
 
-  // Filtra los grupos ocultando items exclusivos de superusuario
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    onMobileClose?.()
+  }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const visibleGroups = navGroups.map((g) => ({
     ...g,
     items: g.items.filter((item) => !item.superusuario || isSuperusuario),
@@ -105,12 +109,19 @@ export default function Sidebar({ user }: SidebarProps) {
   return (
     <aside
       className={cn(
-        'flex-shrink-0 bg-slate-900 border-r border-slate-700/40 flex flex-col h-screen sticky top-0',
-        'transition-all duration-300 overflow-hidden',
-        collapsed ? 'w-16' : 'w-64'
+        // Base
+        'bg-slate-900 border-r border-slate-700/40 flex flex-col z-50 overflow-hidden',
+        'transition-all duration-300',
+        // Mobile: fixed full-height drawer from left
+        'fixed inset-y-0 left-0 h-full w-72',
+        isMobileOpen ? 'translate-x-0 shadow-2xl shadow-black/60' : '-translate-x-full',
+        // md+: static sidebar, always visible, no transform
+        'md:static md:translate-x-0 md:h-screen md:sticky md:top-0 md:shadow-none md:flex-shrink-0',
+        // Width on md+
+        collapsed ? 'md:w-16' : 'md:w-64',
       )}
     >
-      {/* ── Logo + toggle ──────────────────────────────────────────────── */}
+      {/* ── Logo + toggle ─────────────────────────────────────────────────── */}
       <div
         className={cn(
           'border-b border-slate-700/40 flex items-center flex-shrink-0',
@@ -120,12 +131,12 @@ export default function Sidebar({ user }: SidebarProps) {
         {/* Logo → home */}
         <Link
           href="/"
-          className={cn(
-            'flex items-center gap-3 flex-shrink-0',
-            collapsed && 'justify-center'
-          )}
+          className={cn('flex items-center gap-3 flex-shrink-0', collapsed && 'justify-center')}
         >
-          <div className="rounded-xl overflow-hidden shadow-lg shadow-sky-600/30 flex-shrink-0 ring-1 ring-sky-500/30" style={{ width: 72, height: 72 }}>
+          <div
+            className="rounded-xl overflow-hidden shadow-lg shadow-sky-600/30 flex-shrink-0 ring-1 ring-sky-500/30"
+            style={{ width: 72, height: 72 }}
+          >
             <img
               src="/kira-avatar-2.jpg"
               alt="KIRA"
@@ -136,35 +147,35 @@ export default function Sidebar({ user }: SidebarProps) {
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <h1 className="text-white font-bold text-base leading-none tracking-wide">
-                KIRA
-              </h1>
+              <h1 className="text-white font-bold text-base leading-none tracking-wide">KIRA</h1>
               <p className="text-slate-500 text-[11px] mt-0.5">Asistente Industrial</p>
             </div>
           )}
         </Link>
 
-        {/* Toggle button */}
+        {/* Mobile close / Desktop collapse toggle */}
         <button
-          onClick={() => setCollapsed((c) => !c)}
+          onClick={() => {
+            if (isMobileOpen) onMobileClose?.()
+            else setCollapsed((c) => !c)
+          }}
           className={cn(
             'text-slate-500 hover:text-slate-300 hover:bg-slate-800 rounded-lg p-1.5 transition-colors flex-shrink-0',
             !collapsed && 'ml-auto'
           )}
           title={collapsed ? 'Expandir menú' : 'Colapsar menú'}
         >
-          {collapsed ? (
-            <PanelLeftOpen className="w-4 h-4" />
-          ) : (
-            <PanelLeftClose className="w-4 h-4" />
-          )}
+          {/* Mobile: show X; desktop: show panel toggle */}
+          <span className="md:hidden"><X className="w-4 h-4" /></span>
+          <span className="hidden md:block">
+            {collapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+          </span>
         </button>
       </div>
 
-      {/* ── Navigation ────────────────────────────────────────────────── */}
+      {/* ── Navigation ────────────────────────────────────────────────────── */}
       <nav className="flex-1 overflow-y-auto py-4 space-y-6 px-2">
         {collapsed ? (
-          /* Collapsed: icons only with tooltip */
           <div className="space-y-0.5">
             {allNavItems.map((item) => (
               <Link
@@ -183,7 +194,6 @@ export default function Sidebar({ user }: SidebarProps) {
             ))}
           </div>
         ) : (
-          /* Expanded: grouped with labels */
           visibleGroups.map((group) => (
             <div key={group.label}>
               <p className="px-3 mb-1.5 text-[10px] font-semibold text-slate-600 tracking-widest uppercase">
@@ -195,7 +205,7 @@ export default function Sidebar({ user }: SidebarProps) {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors group',
+                      'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors group',
                       isActive(item.href)
                         ? 'bg-sky-600/15 text-sky-400 font-medium'
                         : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
@@ -204,9 +214,7 @@ export default function Sidebar({ user }: SidebarProps) {
                     <item.icon
                       className={cn(
                         'w-4 h-4 flex-shrink-0 transition-colors',
-                        isActive(item.href)
-                          ? 'text-sky-400'
-                          : 'text-slate-500 group-hover:text-slate-300'
+                        isActive(item.href) ? 'text-sky-400' : 'text-slate-500 group-hover:text-slate-300'
                       )}
                     />
                     <span className="truncate">{item.label}</span>
@@ -221,7 +229,7 @@ export default function Sidebar({ user }: SidebarProps) {
         )}
       </nav>
 
-      {/* ── User + Logout ─────────────────────────────────────────────── */}
+      {/* ── User + Logout ─────────────────────────────────────────────────── */}
       <div
         className={cn(
           'border-t border-slate-700/40 flex-shrink-0',
@@ -237,11 +245,8 @@ export default function Sidebar({ user }: SidebarProps) {
               <User className="w-4 h-4 text-slate-300" />
             </div>
             <form action={logout}>
-              <button
-                type="submit"
-                title="Cerrar sesión"
-                className="text-slate-600 hover:text-red-400 transition-colors p-1"
-              >
+              <button type="submit" title="Cerrar sesión"
+                className="text-slate-600 hover:text-red-400 transition-colors p-1">
                 <LogOut className="w-4 h-4" />
               </button>
             </form>

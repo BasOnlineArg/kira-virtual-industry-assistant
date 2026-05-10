@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Send, Brain } from 'lucide-react'
+import { Send, Brain, PanelRight } from 'lucide-react'
 import MessageBubble, { TypingIndicator } from './MessageBubble'
 import type { ChatMessage } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -14,6 +14,7 @@ interface ChatAreaProps {
   sessionTitle: string
   onSendMessage: (content: string) => void
   onRenameSession: (title: string) => void
+  onToggleSessions?: () => void
 }
 
 export default function ChatArea({
@@ -24,6 +25,7 @@ export default function ChatArea({
   sessionTitle,
   onSendMessage,
   onRenameSession,
+  onToggleSessions,
 }: ChatAreaProps) {
   const [input, setInput] = useState('')
   const [editingTitle, setEditingTitle] = useState(false)
@@ -127,13 +129,22 @@ export default function ChatArea({
         ) : (
           <button
             onClick={() => setEditingTitle(true)}
-            className="text-sm font-medium text-slate-300 hover:text-slate-100
+            className="flex-1 text-sm font-medium text-slate-300 hover:text-slate-100
                        truncate text-left transition-colors"
             title="Click para renombrar"
           >
             {sessionTitle}
           </button>
         )}
+        {/* Toggle sessions — mobile only */}
+        <button
+          onClick={() => onToggleSessions?.()}
+          className="md:hidden flex-shrink-0 p-1.5 text-slate-400 hover:text-slate-200
+                     hover:bg-slate-700/50 rounded-lg transition-colors"
+          title="Sesiones"
+        >
+          <PanelRight className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Messages */}

@@ -166,14 +166,14 @@ export default function DashboardShell({
       </div>
 
       {/* ── Block 2: Charts ─────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
 
-        {/* HH chart — takes 2/3 */}
-        <div className="xl:col-span-2 rounded-2xl border border-slate-700/50 bg-slate-800/40 p-4 flex flex-col gap-3">
+        {/* HH chart — takes 2/3 on xl, full width on md */}
+        <div className="md:col-span-2 xl:col-span-2 rounded-2xl border border-slate-700/50 bg-slate-800/40 p-4 flex flex-col gap-3">
           <h2 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
             HH Programadas vs HHR — últimas 12 semanas
           </h2>
-          <div className="h-56">
+          <div className="h-40 sm:h-56">
             <WeeklyChart data={weeklyStats} />
           </div>
         </div>
@@ -199,13 +199,13 @@ export default function DashboardShell({
         <h2 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
           Avisos por prioridad — últimas 12 semanas
         </h2>
-        <div className="h-52">
+        <div className="h-40 sm:h-52">
           <AvisosChart data={weeklyStats} />
         </div>
       </div>
 
       {/* ── Block 3: Alerts + Recent Activity ───────────────────────────────── */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
 
         {/* Alerts panel — 1/3 */}
         <div className="rounded-2xl border border-slate-700/50 bg-slate-800/40 p-4 flex flex-col gap-3">
@@ -225,7 +225,7 @@ export default function DashboardShell({
           />
         </div>
 
-        {/* Recent activity — 2/3 */}
+        {/* Recent activity — 2/3 on xl, 1/2 on md */}
         <div className="xl:col-span-2">
           <RecentActivity
             ultimasOTs={ultimasOTs}

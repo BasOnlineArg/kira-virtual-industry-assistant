@@ -121,7 +121,8 @@ export default function AuditLogTab({ initialLogs }: { initialLogs: AuditEntry[]
       </div>
 
       {/* Log table */}
-      <div className="flex flex-col gap-1.5">
+      <div className="overflow-x-auto">
+      <div className="flex flex-col gap-1.5 min-w-[320px]">
         {logs.length === 0 && (
           <p className="text-sm text-slate-500 text-center py-10">Sin registros para los filtros aplicados.</p>
         )}
@@ -165,6 +166,7 @@ export default function AuditLogTab({ initialLogs }: { initialLogs: AuditEntry[]
           </div>
         ))}
       </div>
+      </div>{/* end overflow-x-auto */}
 
     </div>
   )

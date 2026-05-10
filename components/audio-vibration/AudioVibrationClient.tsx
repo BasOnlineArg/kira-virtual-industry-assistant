@@ -184,9 +184,9 @@ export default function AudioVibrationClient({ initialHistory }: AudioVibrationC
   const canAnalyze = !!metrics && !!tag.trim() && !analyzing
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 h-full">
+    <div className="flex flex-col md:flex-row gap-6 h-full">
       {/* ── LEFT PANEL ───────────────────────────────────── */}
-      <div className="lg:w-80 xl:w-96 flex-shrink-0 space-y-4">
+      <div className="w-full md:w-80 xl:w-96 flex-shrink-0 space-y-4">
         {/* File */}
         <div className="bg-slate-800/40 border border-slate-700/30 rounded-2xl p-4 space-y-4">
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
@@ -324,13 +324,13 @@ export default function AudioVibrationClient({ initialHistory }: AudioVibrationC
           ))}
         </div>
 
-        <div className="bg-slate-800/40 border border-slate-700/30 rounded-2xl p-4 overflow-y-auto">
+        <div className="bg-slate-800/40 border border-slate-700/30 rounded-2xl p-4 overflow-x-auto overflow-y-auto min-h-64">
           {/* Charts tab */}
           {rightTab === 'charts' && (
             metrics ? (
               <DspCharts metrics={metrics} />
             ) : (
-              <div className="flex flex-col items-center gap-3 py-20 text-slate-600">
+              <div className="flex flex-col items-center gap-3 py-10 md:py-20 text-slate-600">
                 <BarChart2 className="w-10 h-10" />
                 <p className="text-sm">Cargá un archivo y procesá la señal para ver las gráficas</p>
               </div>
@@ -342,7 +342,7 @@ export default function AudioVibrationClient({ initialHistory }: AudioVibrationC
             result ? (
               <SonomatResult result={result} tipoEquipo={tipoEquipo} />
             ) : (
-              <div className="flex flex-col items-center gap-3 py-20 text-slate-600">
+              <div className="flex flex-col items-center gap-3 py-10 md:py-20 text-slate-600">
                 <BarChart2 className="w-10 h-10" />
                 <p className="text-sm">
                   {metrics
