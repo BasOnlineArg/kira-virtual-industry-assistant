@@ -58,11 +58,11 @@ export default function SessionsSidebar({
       <aside
         className={cn(
           'bg-slate-900/60 border-l border-slate-700/40 flex flex-col',
-          // Mobile: fixed overlay from the right, toggled by isOpen
-          'fixed top-0 right-0 h-full w-72 z-30 transition-transform duration-300 md:hidden',
+          // Mobile: fixed overlay drawer from the right
+          'fixed top-0 right-0 h-full w-72 z-30 transition-transform duration-300',
           isOpen ? 'translate-x-0' : 'translate-x-full',
-          // md+: static sidebar, always visible
-          'md:static md:translate-x-0 md:w-60 md:flex-shrink-0 md:h-auto md:z-auto md:transition-none',
+          // md+: static, always visible, reset transforms and sizing
+          'md:static md:translate-x-0 md:w-60 md:h-auto md:z-auto md:flex-shrink-0',
         )}
       >
       {/* Header */}

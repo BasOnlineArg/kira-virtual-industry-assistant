@@ -130,7 +130,7 @@ export default function ManualsClient({ initialManuals, initialSessions }: Props
             )}
           >
             <MessageSquare className="w-3.5 h-3.5" />
-            Consultas IA
+            Consulta IA E-RAG
           </button>
           <button
             onClick={() => setActiveTab('viewer')}
