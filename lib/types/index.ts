@@ -12,27 +12,9 @@ export interface KiraUser {
 }
 
 // ─── Assets ─────────────────────────────────────────────────────────────────
+// Fuente de verdad: lib/geo/types.ts (Asset matchea exactamente el schema de la DB)
 
-export type AssetSector = 'superficie' | 'subterranea' | 'planta_caf' | 'truckshop'
-export type AssetMina = 'mariana_central' | 'mariana_norte' | 'emilia' | 'san_marcos' | 'superficie'
-export type AssetStatus = 'operativo' | 'mantenimiento' | 'fuera_de_servicio'
-
-export interface Asset {
-  id: string
-  tag: string
-  nombre: string
-  tipo: string
-  categoria: string | null
-  sector: AssetSector | null
-  mina: AssetMina | null
-  lat: number | null
-  lng: number | null
-  ug_x: number | null
-  ug_y: number | null
-  status: AssetStatus
-  estado: string | null
-  created_at: string
-}
+export type { Asset, AssetStatus } from '@/lib/geo/types'
 
 // ─── Inspections ─────────────────────────────────────────────────────────────
 
@@ -51,7 +33,8 @@ export interface Inspection {
   created_at: string
 }
 
-export interface ChecklistItem {
+/** Ítem de checklist persistido en DB (tabla inspection_checklist_items) */
+export interface InspectionChecklistItem {
   id: string
   inspection_id: string
   asset_id: string | null
@@ -112,35 +95,40 @@ export interface SkfMeasurement {
 }
 
 // ─── Work Orders & Notices ───────────────────────────────────────────────────
+// Shapes reflejan la respuesta del cliente de la API (camelCase, post-mapping)
 
 export type WorkOrderStatus = 'en_proceso' | 'cumplida' | 'anulada' | 'reprogramada'
 
+/** Forma que devuelve GET /api/work-orders (después del dbToClient mapping) */
 export interface WorkOrder {
   id: string
-  ot_number: string
-  asset_id: string | null
-  descripcion: string
+  otNumber: string
+  description: string
+  date: string | null
+  isoWeek: number | null
+  isoYear: number | null
+  hhProg: number
+  hhr: number
   status: WorkOrderStatus
-  hh_programadas: number
-  hhr_reales: number
-  fecha_ejecucion: string | null
-  semana_iso: number | null
-  created_at: string
+  observations: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 export type NoticePriority = 'MN' | 'MI' | 'BKL' | 'PP'
-export type NoticeEquipo = 'equipos_fijos' | 'soldadura' | 'electricos' | 'dek'
 
+/** Forma que devuelve GET /api/notices (después del dbToClient mapping) */
 export interface Notice {
   id: string
-  asset_id: string | null
-  prioridad: NoticePriority
-  titulo: string
-  descripcion: string | null
-  equipo_asignado: NoticeEquipo | null
-  generado_sap: boolean
   fecha: string
-  created_at: string
+  isoWeek: number | null
+  isoYear: number | null
+  prioridad: NoticePriority
+  tag: string | null
+  ejecutante: string | null
+  descripcion: string | null
+  generadoSAP: boolean
+  createdAt: string
 }
 
 // ─── Research & Manuals ──────────────────────────────────────────────────────
@@ -171,12 +159,14 @@ export interface Manual {
 
 // ─── Audit ───────────────────────────────────────────────────────────────────
 
+/** Forma que devuelve GET /api/admin/audit-logs (matchea exactamente la tabla audit_logs) */
 export interface AuditLog {
   id: string
   user_id: string | null
-  accion: string
-  tabla: string
-  registro_id: string | null
+  user_email: string
+  action: string
+  module: string
+  entity_id: string | null
   metadata: Record<string, unknown> | null
   created_at: string
 }

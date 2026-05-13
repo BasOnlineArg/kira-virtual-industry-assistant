@@ -22,6 +22,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   X,
+  CalendarRange,
   type LucideIcon,
 } from 'lucide-react'
 import { logout } from '@/app/actions/auth'
@@ -54,7 +55,8 @@ const navGroups: { label: string; items: NavItem[] }[] = [
       { href: '/geo',                     label: 'Geolocalización',         icon: MapPin },
       { href: '/work-orders',            label: 'Órdenes de Trabajo',      icon: ClipboardList },
       { href: '/notices',                label: 'Avisos de Mantenimiento', icon: Bell },
-      { href: '/rca',                    label: 'Análisis RCA',            icon: GitBranch },
+      { href: '/rca',              label: 'Análisis RCA',            icon: GitBranch    },
+      { href: '/inspection-plan', label: 'Prog. Inspecciones',     icon: CalendarRange },
     ],
   },
   {

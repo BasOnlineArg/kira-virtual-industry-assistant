@@ -10,7 +10,8 @@ export async function GET() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 
-  const { data, error } = await supabase
+  const admin = createAdminClient()
+  const { data, error } = await admin
     .from('rca_events')
     .select('id, created_at, inspector_name, w5h2, analysis_result')
     .order('created_at', { ascending: false })

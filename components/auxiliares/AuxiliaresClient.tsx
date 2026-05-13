@@ -6,26 +6,27 @@ import {
   Cpu, Flag, ClipboardCheck, Wrench,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import SimpleListTab from './SimpleListTab'
-import EquiposTab   from './EquiposTab'
-import RepuestosTab from './RepuestosTab'
-import GanttTab     from './GanttTab'
+import SimpleListTab        from './SimpleListTab'
+import EquiposTab           from './EquiposTab'
+import RepuestosTab         from './RepuestosTab'
+import InspectionImportTab  from './InspectionImportTab'
+import ActivosTab           from './ActivosTab'
 
 type Tab =
-  | 'activos' | 'gantt' | 'rutas' | 'categorias'
+  | 'activos' | 'prog_inspeccion' | 'rutas' | 'categorias'
   | 'equipos' | 'tipos_activo' | 'prioridades'
   | 'inspecciones' | 'repuestos'
 
 const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
-  { id: 'activos',      label: 'Activos',            icon: Package       },
-  { id: 'gantt',        label: 'Prog. Inspecciones', icon: CalendarRange },
-  { id: 'rutas',        label: 'Rutas',              icon: Route         },
-  { id: 'categorias',   label: 'Categorías',         icon: Tag           },
-  { id: 'equipos',      label: 'Equipos de trabajo', icon: Users         },
-  { id: 'tipos_activo', label: 'Tipos de activo',    icon: Cpu           },
-  { id: 'prioridades',  label: 'Prioridades',        icon: Flag          },
-  { id: 'inspecciones', label: 'Inspecciones',       icon: ClipboardCheck },
-  { id: 'repuestos',    label: 'Repuestos SAP',      icon: Wrench        },
+  { id: 'activos',         label: 'Activos',            icon: Package       },
+  { id: 'prog_inspeccion', label: 'Prog. Inspecciones', icon: CalendarRange },
+  { id: 'rutas',           label: 'Rutas',              icon: Route         },
+  { id: 'categorias',      label: 'Categorías',         icon: Tag           },
+  { id: 'equipos',         label: 'Equipos de trabajo', icon: Users         },
+  { id: 'tipos_activo',    label: 'Tipos de activo',    icon: Cpu           },
+  { id: 'prioridades',     label: 'Prioridades',        icon: Flag          },
+  { id: 'inspecciones',    label: 'Inspecciones',       icon: ClipboardCheck },
+  { id: 'repuestos',       label: 'Repuestos SAP',      icon: Wrench        },
 ]
 
 // Listas fijas — solo lectura
@@ -46,17 +47,17 @@ const INSPECCIONES_FIJAS = [
 ]
 
 interface Props {
-  categorias:    any[]
-  tiposActivo:   any[]
-  rutas:         any[]
-  equipos:       any[]
-  repuestos:     any[]
-  ganttRows:     any[]
+  categorias:     any[]
+  tiposActivo:    any[]
+  rutas:          any[]
+  equipos:        any[]
+  repuestos:      any[]
+  assets:         any[]
   isSuperusuario: boolean
 }
 
 export default function AuxiliaresClient({
-  categorias, tiposActivo, rutas, equipos, repuestos, ganttRows, isSuperusuario,
+  categorias, tiposActivo, rutas, equipos, repuestos, assets, isSuperusuario,
 }: Props) {
   const [tab, setTab] = useState<Tab>('activos')
 
@@ -87,14 +88,10 @@ export default function AuxiliaresClient({
       {/* Tab content */}
       <div>
         {tab === 'activos' && (
-          <div className="rounded-2xl border border-slate-700/50 bg-slate-800/20 p-6 text-center text-slate-500 text-sm">
-            La gestión completa de activos se realiza desde el módulo de{' '}
-            <a href="/geo" className="text-sky-400 hover:underline">Geolocalización</a>.
-            <br />Desde ahí podés agregar activos manualmente o colocando un pin en el mapa.
-          </div>
+          <ActivosTab initialAssets={assets} isSuperusuario={isSuperusuario} />
         )}
-        {tab === 'gantt' && (
-          <GanttTab initialRows={ganttRows} isSuperusuario={isSuperusuario} />
+        {tab === 'prog_inspeccion' && (
+          <InspectionImportTab isSuperusuario={isSuperusuario} />
         )}
         {tab === 'rutas' && (
           <SimpleListTab tabla="rutas_inspeccion" initialItems={rutas} />

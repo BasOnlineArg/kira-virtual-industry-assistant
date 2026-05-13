@@ -35,15 +35,11 @@ export default async function AdminPage() {
   const admin = createAdminClient()
 
   const [
-    { data: usersRaw      },
-    { data: whitelistRaw  },
-    { data: logsRaw       },
+    { data: usersRaw },
+    { data: logsRaw  },
   ] = await Promise.all([
     admin.from('users')
       .select('id, email, name, role, active, created_at')
-      .order('created_at', { ascending: false }),
-    admin.from('whitelist')
-      .select('id, email, role_default, created_at')
       .order('created_at', { ascending: false }),
     admin.from('audit_logs')
       .select('id, user_id, user_email, action, module, entity_id, metadata, created_at')
@@ -60,14 +56,13 @@ export default async function AdminPage() {
           <h1 className="text-2xl font-bold text-slate-100">Administración</h1>
         </div>
         <p className="text-sm text-slate-500 mt-1">
-          Gestión de usuarios, whitelist y audit log · Solo superusuario
+          Gestión de usuarios, invitaciones y audit log · Solo superusuario
         </p>
       </div>
 
       <AdminClient
-        initialUsers={usersRaw      ?? []}
-        initialWhitelist={whitelistRaw ?? []}
-        initialLogs={logsRaw        ?? []}
+        initialUsers={usersRaw ?? []}
+        initialLogs={logsRaw   ?? []}
       />
     </div>
   )

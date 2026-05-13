@@ -1,4 +1,4 @@
-export type OtStatus = 'abierta' | 'realizada' | 'anulada' | 'reprogramada'
+export type OtStatus = 'en_proceso' | 'cumplida' | 'anulada' | 'reprogramada'
 
 export interface WorkOrder {
   id: string          // uuid interno
@@ -22,15 +22,15 @@ export const STATUS_CONFIG: Record<OtStatus, {
   border: string
   row: string
 }> = {
-  abierta:      {
-    label: 'Abierta',
+  en_proceso:   {
+    label: 'En proceso',
     color: 'text-blue-400',
     bg: 'bg-blue-500/10',
     border: 'border-blue-500/30',
     row: 'border-l-blue-500',
   },
-  realizada:    {
-    label: 'Realizada',
+  cumplida:     {
+    label: 'Cumplida',
     color: 'text-emerald-400',
     bg: 'bg-emerald-500/10',
     border: 'border-emerald-500/30',

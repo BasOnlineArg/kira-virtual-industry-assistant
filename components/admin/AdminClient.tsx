@@ -1,27 +1,26 @@
 'use client'
 
 import { useState } from 'react'
-import { Users, ListChecks, ShieldCheck } from 'lucide-react'
+import { Users, ListChecks, UserPlus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import UsersTab    from './UsersTab'
-import WhitelistTab from './WhitelistTab'
-import AuditLogTab  from './AuditLogTab'
+import InviteTab   from './InviteTab'
+import AuditLogTab from './AuditLogTab'
 
-type Tab = 'usuarios' | 'whitelist' | 'audit'
+type Tab = 'usuarios' | 'invitar' | 'audit'
 
 const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
-  { id: 'usuarios',   label: 'Usuarios',    icon: Users       },
-  { id: 'whitelist',  label: 'Whitelist',   icon: ShieldCheck },
-  { id: 'audit',      label: 'Audit Log',   icon: ListChecks  },
+  { id: 'usuarios', label: 'Usuarios',         icon: Users    },
+  { id: 'invitar',  label: 'Invitar Usuario',  icon: UserPlus },
+  { id: 'audit',    label: 'Audit Log',        icon: ListChecks },
 ]
 
 interface Props {
-  initialUsers:    any[]
-  initialWhitelist: any[]
-  initialLogs:     any[]
+  initialUsers: any[]
+  initialLogs:  any[]
 }
 
-export default function AdminClient({ initialUsers, initialWhitelist, initialLogs }: Props) {
+export default function AdminClient({ initialUsers, initialLogs }: Props) {
   const [tab, setTab] = useState<Tab>('usuarios')
 
   return (
@@ -50,9 +49,9 @@ export default function AdminClient({ initialUsers, initialWhitelist, initialLog
 
       {/* Tab content */}
       <div>
-        {tab === 'usuarios'  && <UsersTab    initialUsers={initialUsers} />}
-        {tab === 'whitelist' && <WhitelistTab initialList={initialWhitelist} />}
-        {tab === 'audit'     && <AuditLogTab  initialLogs={initialLogs} />}
+        {tab === 'usuarios' && <UsersTab    initialUsers={initialUsers} />}
+        {tab === 'invitar'  && <InviteTab />}
+        {tab === 'audit'    && <AuditLogTab initialLogs={initialLogs} />}
       </div>
 
     </div>

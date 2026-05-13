@@ -4,6 +4,22 @@ import { createAdminClient } from '@/lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 
+export async function GET() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+
+  const admin = createAdminClient()
+  const { data, error } = await admin
+    .from('assets')
+    .select('id, tag, nombre, tipo, sector, mina, lat, lng, status, ub_tecnica, ubicacion_fisica, ruta_zona, frec_sem, hh_ocurr, hh_anual')
+    .order('tag', { ascending: true })
+    .limit(1000)
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json(data ?? [])
+}
+
 export async function POST(request: NextRequest) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()

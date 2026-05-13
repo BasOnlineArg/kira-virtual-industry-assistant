@@ -26,7 +26,7 @@ export default async function NoticesPage() {
     isoYear:      row.iso_year,
     prioridad:    row.prioridad,
     tag:          row.tag,
-    especialidad: row.especialidad,
+    ejecutante:   row.ejecutante,
     descripcion:  row.descripcion,
     generadoSAP:  row.generado_sap,
     createdAt:    row.created_at,

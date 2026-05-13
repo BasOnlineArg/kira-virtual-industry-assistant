@@ -10,7 +10,11 @@ import Anthropic from '@anthropic-ai/sdk'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+function getAnthropic() {
+  const apiKey = process.env.ANTHROPIC_API_KEY
+  if (!apiKey) throw new Error('ANTHROPIC_API_KEY no configurada')
+  return new Anthropic({ apiKey })
+}
 
 const SYSTEM_PROMPT = `Eres KIRA, el asistente técnico especializado en mantenimiento industrial de minas en la Patagonia argentina.
 Tu función es responder preguntas técnicas utilizando EXCLUSIVAMENTE la información contenida en los fragmentos de manuales y pautas proporcionados.
@@ -56,11 +60,12 @@ export async function POST(request: NextRequest) {
   if (!session) return NextResponse.json({ error: 'Sesión no encontrada' }, { status: 404 })
 
   // 2. Save user message
-  await admin.from('manual_chat_messages').insert({
+  const { error: userMsgErr } = await admin.from('manual_chat_messages').insert({
     session_id: sessionId,
     role:       'user',
     content:    query,
   })
+  if (userMsgErr) return NextResponse.json({ error: 'Error al guardar mensaje' }, { status: 500 })
 
   // 3. Full-Text Search via RPC (no embedding needed)
   const filterIds = manualIds && manualIds.length > 0 ? manualIds : null
@@ -76,7 +81,7 @@ export async function POST(request: NextRequest) {
   }
 
   // 4. Get manual names for citations
-  const uniqueManualIds = [...new Set((chunks ?? []).map((c: Record<string, unknown>) => c.manual_id as string))]
+  const uniqueManualIds = Array.from(new Set((chunks ?? []).map((c: Record<string, unknown>) => c.manual_id as string)))
   const { data: manualRows } = uniqueManualIds.length > 0
     ? await admin.from('manuals').select('id, nombre, fabricante').in('id', uniqueManualIds)
     : { data: [] }
@@ -124,8 +129,8 @@ export async function POST(request: NextRequest) {
     },
   ]
 
-  const claudeRes = await anthropic.messages.create({
-    model:      'claude-sonnet-4-6',
+  const claudeRes = await getAnthropic().messages.create({
+    model:      'claude-haiku-4-5',
     max_tokens: 1024,
     system:     SYSTEM_PROMPT,
     messages,
@@ -148,7 +153,7 @@ export async function POST(request: NextRequest) {
   })
 
   // 9. Save assistant message with citations
-  const { data: savedMsg } = await admin
+  const { data: savedMsg, error: asstMsgErr } = await admin
     .from('manual_chat_messages')
     .insert({
       session_id:  sessionId,
@@ -158,6 +163,7 @@ export async function POST(request: NextRequest) {
     })
     .select()
     .single()
+  if (asstMsgErr) return NextResponse.json({ error: 'Error al guardar respuesta' }, { status: 500 })
 
   // 10. Auto-title session on first exchange
   if (session.titulo === 'Nueva consulta') {

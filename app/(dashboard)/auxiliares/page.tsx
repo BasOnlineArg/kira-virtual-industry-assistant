@@ -18,19 +18,19 @@ export default async function AuxiliaresPage() {
   const admin = createAdminClient()
 
   const [
-    { data: categorias   },
-    { data: tiposActivo  },
-    { data: rutas        },
-    { data: equipos      },
-    { data: repuestos    },
-    { data: ganttRows    },
+    { data: categorias  },
+    { data: tiposActivo },
+    { data: rutas       },
+    { data: equipos     },
+    { data: repuestos   },
+    { data: assets      },
   ] = await Promise.all([
     admin.from('categorias').select('*').order('nombre'),
     admin.from('tipos_activo').select('*').order('nombre'),
     admin.from('rutas_inspeccion').select('*').order('nombre'),
     admin.from('equipos_trabajo').select('*').order('nombre'),
     admin.from('repuestos').select('*').order('created_at', { ascending: false }).limit(500),
-    admin.from('programa_inspeccion').select('*').order('orden'),
+    admin.from('assets').select('id, tag, nombre, tipo, sector, mina, lat, lng, status, ub_tecnica, ubicacion_fisica, ruta_zona, frec_sem, hh_ocurr, hh_anual').order('tag').limit(1000),
   ])
 
   return (
@@ -46,12 +46,12 @@ export default async function AuxiliaresPage() {
       </div>
 
       <AuxiliaresClient
-        categorias={categorias   ?? []}
+        categorias={categorias  ?? []}
         tiposActivo={tiposActivo ?? []}
-        rutas={rutas             ?? []}
-        equipos={equipos         ?? []}
-        repuestos={repuestos     ?? []}
-        ganttRows={ganttRows     ?? []}
+        rutas={rutas            ?? []}
+        equipos={equipos        ?? []}
+        repuestos={repuestos    ?? []}
+        assets={assets          ?? []}
         isSuperusuario={isSuperusuario}
       />
     </div>

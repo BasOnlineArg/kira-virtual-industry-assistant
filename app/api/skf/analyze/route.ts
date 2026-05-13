@@ -158,7 +158,7 @@ Punto más crítico: ${worstPoint.punto} — ${worstPoint.velocityRms.toFixed(2)
   try {
     const client = new Anthropic({ apiKey })
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: 'claude-haiku-4-5',
       max_tokens: 1024,
       system: SKF_SYSTEM_PROMPT,
       messages: [{ role: 'user', content }],

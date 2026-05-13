@@ -39,12 +39,11 @@ export async function PATCH(req: NextRequest) {
   const caller = await getCallerOrDeny()
   if (!caller) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const body = await req.json()
-  const { id, role, active } = body as {
-    id:      string
-    role?:   string
-    active?: boolean
+  let body: { id: string; role?: string; active?: boolean }
+  try { body = await req.json() } catch {
+    return NextResponse.json({ error: 'Payload inválido' }, { status: 400 })
   }
+  const { id, role, active } = body
 
   if (!id) return NextResponse.json({ error: 'id requerido' }, { status: 400 })
 

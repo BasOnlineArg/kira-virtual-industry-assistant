@@ -1,11 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Menu } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  Home, Brain, LayoutDashboard, ClipboardList, Bell,
+  Menu, Home, Brain, LayoutDashboard, ClipboardList, Bell,
   type LucideIcon,
 } from 'lucide-react'
 import Sidebar from '@/components/sidebar/Sidebar'

@@ -101,6 +101,7 @@ export async function DELETE(request: NextRequest) {
     if (path) await admin.storage.from('structural-reports').remove([path])
   }
 
-  await admin.from('structural_reports').delete().eq('id', id)
+  const { error: deleteError } = await admin.from('structural_reports').delete().eq('id', id)
+  if (deleteError) return NextResponse.json({ error: deleteError.message }, { status: 500 })
   return NextResponse.json({ ok: true })
 }

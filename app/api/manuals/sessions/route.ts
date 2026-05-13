@@ -51,11 +51,12 @@ export async function DELETE(request: NextRequest) {
   }
 
   const admin = createAdminClient()
-  await admin
+  const { error } = await admin
     .from('manual_chat_sessions')
     .delete()
     .eq('id', body.id)
     .eq('user_id', user.id)
 
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ ok: true })
 }

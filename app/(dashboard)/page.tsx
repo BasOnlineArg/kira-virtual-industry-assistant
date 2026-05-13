@@ -12,12 +12,14 @@ import {
   LayoutDashboard,
   Database,
   GitBranch,
+  CalendarRange,
   ShieldCheck,
   CheckCircle2,
   Clock,
   type LucideIcon,
 } from 'lucide-react'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 type ModuleStatus = 'complete' | 'next' | 'planned' | 'base'
@@ -131,10 +133,18 @@ const modules: ModuleCard[] = [
   },
   {
     id: 13,
+    href: '/inspection-plan',
+    icon: CalendarRange,
+    label: 'Programa de Inspecciones',
+    description: 'Gantt 2026–2027 con 420 activos × 56 semanas + rutas de inspección por zona. Inspector único, régimen 14×14.',
+    status: 'complete',
+  },
+  {
+    id: 14,
     href: '/admin',
     icon: Settings,
     label: 'Administración',
-    description: 'Gestión de usuarios (whitelist) y audit log tamper-proof. Solo superusuario.',
+    description: 'Invitación de usuarios vía Supabase Auth y audit log tamper-proof. Solo superusuario.',
     status: 'complete',
   },
 ]
@@ -166,10 +176,12 @@ export default async function HomePage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
+  if (!user) redirect('/login')
+
   const { data: userData } = await supabase
     .from('users')
     .select('name, role')
-    .eq('id', user!.id)
+    .eq('id', user.id)
     .single()
 
   const greeting = () => {
@@ -206,7 +218,7 @@ export default async function HomePage() {
             {completed} de {functional.length} módulos funcionales disponibles
           </p>
           <p className="text-xs text-slate-400 mt-0.5">
-            Infraestructura base + M1–M13 funcionales sobre Supabase, Next.js 14 y Claude API.
+            Infraestructura base + M1–M14 funcionales sobre Supabase, Next.js 14 y Claude API.
           </p>
         </div>
         <div className="shrink-0 text-right">

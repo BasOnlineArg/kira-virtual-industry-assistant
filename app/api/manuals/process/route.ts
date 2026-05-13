@@ -12,7 +12,11 @@ import { chunkText } from '@/lib/manuals/chunker'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60  // Vercel: allow up to 60s for processing
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+function getAnthropic() {
+  const apiKey = process.env.ANTHROPIC_API_KEY
+  if (!apiKey) throw new Error('ANTHROPIC_API_KEY no configurada')
+  return new Anthropic({ apiKey })
+}
 
 export async function POST(request: NextRequest) {
   const supabase = createClient()
@@ -111,7 +115,8 @@ async function extractText(buffer: Buffer, formato: string, nombre: string): Pro
   }
 
   if (formato === 'pdf') {
-    const pdfParse = (await import('pdf-parse')).default
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pdfParse = ((await import('pdf-parse')) as any).default as (b: Buffer) => Promise<{ text: string }>
     const data = await pdfParse(buffer)
     return data.text
   }
@@ -125,8 +130,8 @@ async function extractText(buffer: Buffer, formato: string, nombre: string): Pro
       ? 'image/gif'
       : 'image/jpeg'
 
-    const response = await anthropic.messages.create({
-      model:      'claude-sonnet-4-6',
+    const response = await getAnthropic().messages.create({
+      model:      'claude-haiku-4-5',
       max_tokens: 4096,
       messages: [{
         role: 'user',

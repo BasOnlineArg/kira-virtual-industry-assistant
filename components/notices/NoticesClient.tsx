@@ -12,7 +12,7 @@ import {
 } from '@/lib/notices/types'
 
 const PRIORIDADES = Object.keys(PRIORIDAD_CONFIG) as Prioridad[]
-const EJECUTANTES = Object.keys(EJECUTANTE_CONFIG) as Especialidad[]
+const EJECUTANTES = Object.keys(EJECUTANTE_CONFIG) as Ejecutante[]
 
 interface Props {
   initialAvisos: Aviso[]
@@ -22,7 +22,7 @@ export default function NoticesClient({ initialAvisos }: Props) {
   const [avisos, setAvisos]         = useState<Aviso[]>(initialAvisos)
   const [search, setSearch]         = useState('')
   const [filterPrio, setFilterPrio] = useState<Prioridad | 'all'>('all')
-  const [filterEsp, setFilterEsp]   = useState<Especialidad | 'all'>('all')
+  const [filterEsp, setFilterEsp]   = useState<Ejecutante | 'all'>('all')
   const [showDone, setShowDone]     = useState(true)
 
   // ── Create aviso ────────────────────────────────────────────────────────────
@@ -186,7 +186,7 @@ export default function NoticesClient({ initialAvisos }: Props) {
               <select
                 className="kira-input text-[11px] py-1.5 w-auto shrink-0"
                 value={filterEsp}
-                onChange={(e) => setFilterEsp(e.target.value as Especialidad | 'all')}
+                onChange={(e) => setFilterEsp(e.target.value as Ejecutante | 'all')}
               >
                 <option value="all">Todas las ejecutantees</option>
                 {EJECUTANTES.map((e) => (

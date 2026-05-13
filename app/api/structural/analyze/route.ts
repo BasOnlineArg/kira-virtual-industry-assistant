@@ -163,7 +163,7 @@ Items críticos (score ≤ 2/5): ${criticalItems.length > 0 ? criticalItems.join
   try {
     const client = new Anthropic({ apiKey })
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: 'claude-sonnet-4-5',
       max_tokens: 1024,
       system: STRUCTURAL_PROMPT,
       messages: [{ role: 'user', content: summaryText }],

@@ -374,7 +374,7 @@ export async function processAudio(
   const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer)
   await audioCtx.close()
 
-  let samples = audioBuffer.getChannelData(0) // Mono (first channel)
+  let samples = audioBuffer.getChannelData(0) as unknown as Float32Array // Mono (first channel)
   const sampleRate = audioBuffer.sampleRate
   const duration = audioBuffer.duration
 

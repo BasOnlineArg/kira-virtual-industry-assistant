@@ -135,7 +135,7 @@ Picos espectrales (top 5): ${peaksText || 'No detectados'}
   try {
     const client = new Anthropic({ apiKey })
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: 'claude-sonnet-4-5',
       max_tokens: 2048,
       system: SONOMAT_SYSTEM_PROMPT,
       messages: [{ role: 'user', content: metricsText }],

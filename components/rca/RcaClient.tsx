@@ -489,9 +489,9 @@ export default function RcaClient({ userName }: { userName: string }) {
           </div>
 
           {/* Timeline */}
-          {analysis?.lineaTiempo?.length > 0 && (
+          {(analysis?.lineaTiempo?.length ?? 0) > 0 && (
             <div className="border-t border-slate-800 pt-1">
-              <TimelineView events={analysis.lineaTiempo} />
+              <TimelineView events={analysis!.lineaTiempo!} />
             </div>
           )}
         </div>
@@ -803,7 +803,6 @@ export default function RcaClient({ userName }: { userName: string }) {
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               )}
-              {step === 5 && null}
             </div>
           )}
         </div>

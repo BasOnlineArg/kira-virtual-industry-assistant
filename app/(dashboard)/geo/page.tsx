@@ -1,41 +1,33 @@
-import { createClient } from '@/lib/supabase/server'
+import { redirect }           from 'next/navigation'
+import { createClient }      from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import KiraMap from '@/components/geo/KiraMap'
-import { MOCK_ASSETS } from '@/lib/geo/mock'
-import type { Asset } from '@/lib/geo/types'
+import KiraMap               from '@/components/geo/KiraMap'
+import { MOCK_ASSETS }       from '@/lib/geo/mock'
+import type { Asset }        from '@/lib/geo/types'
 
 export const dynamic = 'force-dynamic'
 
 export default async function GeoPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
   let assets: Asset[] = []
 
   try {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const admin = createAdminClient()
+    const { data } = await admin
+      .from('assets')
+      .select(`
+        id, tag, nombre, tipo, capa, sector, mina,
+        lat, lng, ug_x, ug_y,
+        status, estado, ubicacion, inspector_asignado,
+        ultima_inspeccion, proxima_inspeccion
+      `)
+      .order('nombre')
 
-    if (user) {
-      const admin = createAdminClient()
-      const { data } = await admin
-        .from('assets')
-        .select(`
-          id, tag, nombre, tipo, capa, sector, mina,
-          lat, lng, ug_x, ug_y,
-          status, estado, ubicacion, inspector_asignado,
-          ultima_inspeccion, proxima_inspeccion
-        `)
-        .order('nombre')
-
-      if (data && data.length > 0) {
-        assets = data as Asset[]
-      } else {
-        // No assets in DB yet — use mock data
-        assets = MOCK_ASSETS
-      }
-    } else {
-      assets = MOCK_ASSETS
-    }
+    assets = (data && data.length > 0) ? data as Asset[] : MOCK_ASSETS
   } catch {
-    // DB table doesn't exist yet — fall back to mock
     assets = MOCK_ASSETS
   }
 

@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
     const client = new Anthropic({ apiKey })
 
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: 'claude-sonnet-4-5',
       max_tokens: 2048,
       system: VISUAL_SYSTEM_PROMPT,
       messages: [
@@ -156,10 +156,11 @@ export async function POST(request: NextRequest) {
         recomendaciones: 'Revisar diagnóstico y determinar acción.',
       }
     }
-  } catch (e) {
-    console.error('[Visual Inspection] Claude error:', e)
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e)
+    console.error('[Visual Inspection] Claude error:', msg)
     return NextResponse.json(
-      { error: 'Error al analizar la imagen con Claude. Intentá de nuevo.' },
+      { error: `Error Claude: ${msg}` },
       { status: 500 }
     )
   }

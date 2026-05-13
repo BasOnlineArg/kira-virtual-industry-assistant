@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import AudioVibrationClient from '@/components/audio-vibration/AudioVibrationClient'
@@ -8,6 +9,7 @@ export const dynamic = 'force-dynamic'
 export default async function AudioVibrationPage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
   let history: AudioAnalysisRow[] = []
   if (user) {
