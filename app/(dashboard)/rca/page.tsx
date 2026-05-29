@@ -21,13 +21,13 @@ export default async function RcaPage() {
             Análisis RCA
           </h1>
           <p className="text-[11px] text-slate-500">
-            Análisis de Causa Raíz · Ishikawa 6M + 5 Porqués + IA
+            Análisis de Causa Raíz · 5W2H + Ishikawa 9M + IA
           </p>
         </div>
       </div>
 
       {/* Main */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-auto">
         <RcaClient userName={userData?.name ?? user.email ?? 'Inspector'} />
       </div>
     </div>

@@ -1,73 +1,78 @@
-export interface W5H2 {
-  what:     string
-  who:      string
-  where:    string
-  when:     string
-  why:      string
-  how:      string
-  how_much: string
-  photos:   string[]   // data URLs
+// ─── RCA module types (new redesign) ──────────────────────────────────────────
+
+export interface W2HData {
+  what:        string
+  who:         string
+  where:       string
+  when:        string
+  why:         string
+  how:         string
+  howmuch:     string
+  responsable: string
+  nro:         string
 }
 
-export interface Cause {
-  id:    string
-  texto: string
+/** One image stored in canvas data: object URL + loaded HTMLImageElement */
+export interface CanvasImage {
+  src: string
+  el:  HTMLImageElement
 }
 
-export type CategoryId =
-  | 'mano_obra'
-  | 'maquina'
-  | 'metodo'
-  | 'material'
-  | 'medio_ambiente'
-  | 'medicion'
+/** Data for one Ishikawa category */
+export interface CatData {
+  text:   string          // observations textarea
+  causes: string[]        // list of identified causes
+  images: CanvasImage[]   // attached photo evidence
+}
 
-export type IshikawaData = Record<CategoryId, Cause[]>
+export interface InspData {
+  text:   string
+  images: CanvasImage[]
+}
 
-export type PorguesData = Record<string, string[]> // cause id → [why1…why5]
+export interface ProbData {
+  w2h:    Partial<W2HData>
+  images: CanvasImage[]
+}
 
-export interface TimelineEvent {
-  momento:     string
+export type TLEventType =
+  | 'condicion'
+  | 'falla'
+  | 'alarma'
+  | 'intervencion'
+  | 'consecuencia'
+
+export interface TLEvent {
+  id:   string
+  dt:   string
+  type: TLEventType
+  desc: string
+  resp: string
+}
+
+export interface AiAction {
   descripcion: string
-  tipo:        'inicio' | 'escalada' | 'critico' | 'fin'
-}
-
-export interface CorrectiveAction {
-  accion:      string
   responsable: string
   plazo:       string
 }
 
-export interface AnalysisResult {
-  causaRaiz:            string
-  causasContribuyentes: string[]
-  nivelRiesgoResidual:  'Crítico' | 'Alto' | 'Medio' | 'Bajo'
-  accionesCorrectivas:  CorrectiveAction[]
-  leccionesAprendidas:  string[]
-  patronesMonitorear:   string[]
-  conclusionEjecutiva:  string
-  lineaTiempo:          TimelineEvent[]
+export interface AiResult {
+  causa_raiz:            string
+  causas_contribuyentes: string[]
+  riesgo:                'CRITICO' | 'ALTO' | 'MEDIO' | 'BAJO'
+  riesgo_justificacion:  string
+  acciones:              AiAction[]
+  patrones:              string[]
+  conclusion:            string
 }
 
-export const CATEGORIES: { id: CategoryId; label: string; icon: string; color: string }[] = [
-  { id: 'mano_obra',      label: 'Mano de Obra',  icon: '👷', color: '#38bdf8' },
-  { id: 'maquina',        label: 'Máquina',        icon: '⚙️', color: '#34d399' },
-  { id: 'metodo',         label: 'Método',         icon: '📋', color: '#fbbf24' },
-  { id: 'material',       label: 'Material',       icon: '🧱', color: '#f87171' },
-  { id: 'medio_ambiente', label: 'Medio Ambiente', icon: '🌿', color: '#a78bfa' },
-  { id: 'medicion',       label: 'Medición',       icon: '📏', color: '#fb923c' },
-]
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-export type BranchPhotos = Record<CategoryId, string[]>
-
-export const EMPTY_ISHIKAWA: IshikawaData = {
-  mano_obra: [], maquina: [], metodo: [], material: [], medio_ambiente: [], medicion: [],
+export const EMPTY_W2H: W2HData = {
+  what: '', who: '', where: '', when: '',
+  why: '', how: '', howmuch: '', responsable: '', nro: '',
 }
 
-export const EMPTY_BRANCH_PHOTOS: BranchPhotos = {
-  mano_obra: [], maquina: [], metodo: [], material: [], medio_ambiente: [], medicion: [],
-}
-
-export const EMPTY_W5H2: W5H2 = {
-  what: '', who: '', where: '', when: '', why: '', how: '', how_much: '', photos: [],
+export function emptyCatData(): CatData {
+  return { text: '', causes: [], images: [] }
 }
