@@ -50,7 +50,7 @@ export default function RcaW2HForm({ w2h, onSubmit }: Props) {
             🔍 Análisis de Causa Raíz
           </h1>
           <p style={{ fontSize: 12, color: C.textSec, margin: '3px 0 0' }}>
-            Sinergy Consultant — HSEyQ · Patagonia, Argentina
+            KIRA Virtual Industry Assistant
           </p>
         </div>
 

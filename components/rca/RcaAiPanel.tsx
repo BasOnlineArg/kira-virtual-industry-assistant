@@ -192,7 +192,7 @@ export default function RcaAiPanel({
 
     pdfRef.current.innerHTML = `
       <div class="pdf-cover">
-        <div class="pdf-cover-badge">Sinergy Consultant — HSEyQ</div>
+        <div class="pdf-cover-badge">KIRA Virtual Industry Assistant</div>
         <h1>Informe de Análisis<br/>de Causa Raíz</h1>
         <div class="cover-sub">${w2h.what || 'Evento analizado'}</div>
         <div class="pdf-cover-meta">
@@ -266,7 +266,7 @@ export default function RcaAiPanel({
         </div>
       </div>
       <div style="margin-top:20px;text-align:center;font-size:7.5pt;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:10px;">
-        Sinergy Consultant — HSEyQ · Patagonia, Argentina · ${today()} · ${w2h.nro || ''}
+        KIRA Virtual Industry Assistant · ${today()} · ${w2h.nro || ''}
       </div>
     `
     setTimeout(() => window.print(), 200)
