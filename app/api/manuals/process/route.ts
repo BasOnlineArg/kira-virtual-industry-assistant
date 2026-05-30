@@ -115,8 +115,7 @@ async function extractText(buffer: Buffer, formato: string, nombre: string): Pro
   }
 
   if (formato === 'pdf') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const pdfParse = ((await import('pdf-parse')) as any).default as (b: Buffer) => Promise<{ text: string }>
+    const pdfParse = ((await import('pdf-parse')) as unknown as { default: (b: Buffer) => Promise<{ text: string }> }).default
     const data = await pdfParse(buffer)
     return data.text
   }

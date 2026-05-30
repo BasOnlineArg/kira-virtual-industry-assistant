@@ -243,7 +243,7 @@ export default function ActivosTab({ initialAssets, isSuperusuario }: Props) {
         </div>
       ) : filtered.length === 0 ? (
         <div className="flex items-center justify-center py-10 text-slate-600 text-sm">
-          Sin resultados para "{search}"
+          {`Sin resultados para "${search}"`}
         </div>
       ) : (
         <div className="overflow-x-auto rounded-2xl border border-slate-700/40">

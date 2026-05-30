@@ -13,7 +13,7 @@ const ISO_THRESHOLDS: Record<string, [number, number, number]> = {
   IV:  [7.1,  18,   45],
 }
 
-export function isoZone(v: number, cls: string): { zone: 'A' | 'B' | 'C' | 'D'; estado: 'verde' | 'amarillo' | 'rojo' } {
+function isoZone(v: number, cls: string): { zone: 'A' | 'B' | 'C' | 'D'; estado: 'verde' | 'amarillo' | 'rojo' } {
   const [ab, bc, cd] = ISO_THRESHOLDS[cls] ?? ISO_THRESHOLDS['II']
   if (v <= ab) return { zone: 'A', estado: 'verde' }
   if (v <= bc) return { zone: 'B', estado: 'amarillo' }
