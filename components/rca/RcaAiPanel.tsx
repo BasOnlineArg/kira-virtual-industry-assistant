@@ -151,17 +151,22 @@ export default function RcaAiPanel({
   const saveAnalysis = useCallback(async () => {
     setSaveStatus('saving')
     try {
-      // Strip non-serializable image objects — only persist text + causes
-      const serCat = catData.map(({ text, causes }) => ({ text, causes }))
+      // Serialize cat data: keep text + causes + permanent image URLs (skip blob:// ephemeral)
+      const serCat = catData.map(({ text, causes, images }) => ({
+        text,
+        causes,
+        image_urls: images.map(i => i.src).filter(s => !s.startsWith('blob:')),
+      }))
 
       const payload = {
-        title:     w2h.what.trim() || 'Análisis sin título',
-        nro:       w2h.nro || '',
+        title:           w2h.what.trim() || 'Análisis sin título',
+        nro:             w2h.nro || '',
         w2h,
-        cat_data:  serCat,
-        insp_text: inspData.text,
+        cat_data:        serCat,
+        insp_text:       inspData.text,
+        insp_image_urls: inspData.images.map(i => i.src).filter(s => !s.startsWith('blob:')),
         events,
-        ai_result: aiData,
+        ai_result:       aiData,
       }
 
       const method = analysisId ? 'PUT' : 'POST'

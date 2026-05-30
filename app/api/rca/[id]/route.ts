@@ -14,7 +14,7 @@ export async function GET(
 
   const { data, error } = await supabase
     .from('rca_analyses')
-    .select('id, w2h, cat_data, insp_text, events, ai_result')
+    .select('id, w2h, cat_data, insp_text, insp_image_urls, events, ai_result')
     .eq('id', params.id)
     .single()
 
@@ -38,14 +38,15 @@ export async function PUT(
   const { data, error } = await supabase
     .from('rca_analyses')
     .update({
-      title:     body.title,
-      nro:       body.nro,
-      w2h:       body.w2h,
-      cat_data:  body.cat_data,
-      insp_text: body.insp_text,
-      events:    body.events,
-      ai_result: body.ai_result,
-      updated_at: new Date().toISOString(),
+      title:           body.title,
+      nro:             body.nro,
+      w2h:             body.w2h,
+      cat_data:        body.cat_data,
+      insp_text:       body.insp_text,
+      insp_image_urls: body.insp_image_urls ?? [],
+      events:          body.events,
+      ai_result:       body.ai_result,
+      updated_at:      new Date().toISOString(),
     })
     .eq('id', params.id)
     .select('id, updated_at')

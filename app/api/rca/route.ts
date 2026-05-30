@@ -26,13 +26,14 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 
   let body: {
-    title:     string
-    nro:       string
-    w2h:       Record<string, unknown>
-    cat_data:  Array<{ text: string; causes: string[] }>
-    insp_text: string
-    events:    unknown[]
-    ai_result: Record<string, unknown> | null
+    title:           string
+    nro:             string
+    w2h:             Record<string, unknown>
+    cat_data:        Array<{ text: string; causes: string[]; image_urls?: string[] }>
+    insp_text:       string
+    insp_image_urls: string[]
+    events:          unknown[]
+    ai_result:       Record<string, unknown> | null
   }
   try { body = await req.json() }
   catch { return NextResponse.json({ error: 'Payload inválido' }, { status: 400 }) }
@@ -40,14 +41,15 @@ export async function POST(req: NextRequest) {
   const { data, error } = await supabase
     .from('rca_analyses')
     .insert({
-      created_by: user.id,
-      title:      body.title,
-      nro:        body.nro,
-      w2h:        body.w2h,
-      cat_data:   body.cat_data,
-      insp_text:  body.insp_text,
-      events:     body.events,
-      ai_result:  body.ai_result,
+      created_by:      user.id,
+      title:           body.title,
+      nro:             body.nro,
+      w2h:             body.w2h,
+      cat_data:        body.cat_data,
+      insp_text:       body.insp_text,
+      insp_image_urls: body.insp_image_urls ?? [],
+      events:          body.events,
+      ai_result:       body.ai_result,
     })
     .select('id, created_at')
     .single()

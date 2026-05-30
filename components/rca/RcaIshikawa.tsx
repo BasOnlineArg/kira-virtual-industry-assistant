@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
 import type { CatData, InspData, ProbData, W2HData, CanvasImage } from './types'
 import { CATS, QUESTIONS } from './constants'
+import { createClient } from '@/lib/supabase/client'
 
 // ─── Canvas constants ─────────────────────────────────────────────────────────
 const CW = 1200, CH = 500
@@ -91,6 +92,11 @@ export default function RcaIshikawa({
 
   const [probW2H,    setProbW2H]   = useState<Partial<W2HData>>({})
   const [probImages, setProbImages] = useState<CanvasImage[]>([])
+
+  // Upload-in-progress flags (one per modal)
+  const [catUploading,  setCatUploading]  = useState(false)
+  const [inspUploading, setInspUploading] = useState(false)
+  const [probUploading, setProbUploading] = useState(false)
 
   // ── Canvas loop ──────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -472,26 +478,66 @@ export default function RcaIshikawa({
     if (v) { setCatCauses(c => [...c, v]); setCauseInp('') }
   }, [causeInp])
 
-  function handleCatFiles(e: React.ChangeEvent<HTMLInputElement>) {
-    Array.from(e.target.files ?? []).forEach(f => {
-      const src = URL.createObjectURL(f)
-      const el = new Image(); el.src = src
-      el.onload = () => setCatImages(imgs => [...imgs, { src, el }])
-    }); e.target.value = ''
+  // ── Supabase Storage upload helpers ──────────────────────────────────────
+  /** Upload one File to rca-images bucket → returns permanent URL */
+  async function uploadToStorage(file: File): Promise<string | null> {
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    const userId = session?.user?.id ?? 'anon'
+    const ext    = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
+    const path   = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+
+    const { error } = await supabase.storage.from('rca-images').upload(path, file, { upsert: false })
+    if (error) { alert('Error al subir imagen: ' + error.message); return null }
+
+    return supabase.storage.from('rca-images').getPublicUrl(path).data.publicUrl
   }
-  function handleInspFiles(e: React.ChangeEvent<HTMLInputElement>) {
-    Array.from(e.target.files ?? []).forEach(f => {
-      const src = URL.createObjectURL(f)
-      const el = new Image(); el.src = src
-      el.onload = () => setInspImages(imgs => [...imgs, { src, el }])
-    }); e.target.value = ''
+
+  /** Resolve a public URL → loaded HTMLImageElement */
+  function loadImageEl(src: string): Promise<HTMLImageElement> {
+    return new Promise(resolve => {
+      const el = new Image()
+      el.crossOrigin = 'anonymous'
+      el.onload  = () => resolve(el)
+      el.onerror = () => resolve(el)   // resolve even on error; canvas will skip broken images
+      el.src = src
+    })
   }
-  function handleProbFiles(e: React.ChangeEvent<HTMLInputElement>) {
-    Array.from(e.target.files ?? []).forEach(f => {
-      const src = URL.createObjectURL(f)
-      const el = new Image(); el.src = src
-      el.onload = () => setProbImages(imgs => [...imgs, { src, el }])
-    }); e.target.value = ''
+
+  /** Upload multiple files and append to images state */
+  async function uploadFiles(
+    files: File[],
+    setUploading: (v: boolean) => void,
+    setImages:    React.Dispatch<React.SetStateAction<CanvasImage[]>>,
+  ) {
+    if (!files.length) return
+    setUploading(true)
+    try {
+      const results: CanvasImage[] = []
+      for (const f of files) {
+        const src = await uploadToStorage(f)
+        if (src) {
+          const el = await loadImageEl(src)
+          results.push({ src, el })
+        }
+      }
+      if (results.length) setImages(imgs => [...imgs, ...results])
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  async function handleCatFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []); e.target.value = ''
+    await uploadFiles(files, setCatUploading, setCatImages)
+  }
+  async function handleInspFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []); e.target.value = ''
+    await uploadFiles(files, setInspUploading, setInspImages)
+  }
+  async function handleProbFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []); e.target.value = ''
+    await uploadFiles(files, setProbUploading, setProbImages)
   }
 
   const activeCat = activeCatIdx !== null ? CATS[activeCatIdx] : null
@@ -580,7 +626,10 @@ export default function RcaIshikawa({
               <div>
                 <p style={{ fontSize: 11, fontWeight: 600, color: K.textSec, marginBottom: 6 }}>📎 Imágenes</p>
                 <ImgGrid images={catImages} onRemove={i => setCatImages(imgs => imgs.filter((_, j) => j !== i))} />
-                <label style={ubtn}>📷 Adjuntar<input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleCatFiles} /></label>
+                <label style={{ ...ubtn, opacity: catUploading ? 0.6 : 1, pointerEvents: catUploading ? 'none' : 'auto' }}>
+                  {catUploading ? '⏳ Subiendo...' : '📷 Adjuntar'}
+                  <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleCatFiles} disabled={catUploading} />
+                </label>
               </div>
             </div>
             <div style={mf}>
@@ -606,7 +655,10 @@ export default function RcaIshikawa({
               <div>
                 <p style={{ fontSize: 11, fontWeight: 600, color: K.textSec, marginBottom: 6 }}>📎 Imágenes</p>
                 <ImgGrid images={inspImages} onRemove={i => setInspImages(imgs => imgs.filter((_, j) => j !== i))} />
-                <label style={ubtn}>📷 Adjuntar<input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleInspFiles} /></label>
+                <label style={{ ...ubtn, opacity: inspUploading ? 0.6 : 1, pointerEvents: inspUploading ? 'none' : 'auto' }}>
+                  {inspUploading ? '⏳ Subiendo...' : '📷 Adjuntar'}
+                  <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleInspFiles} disabled={inspUploading} />
+                </label>
               </div>
             </div>
             <div style={mf}>
@@ -652,7 +704,10 @@ export default function RcaIshikawa({
               <div>
                 <p style={{ fontSize: 11, fontWeight: 600, color: K.textSec, marginBottom: 6 }}>📎 Imágenes</p>
                 <ImgGrid images={probImages} onRemove={i => setProbImages(imgs => imgs.filter((_, j) => j !== i))} />
-                <label style={ubtn}>📷 Adjuntar<input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleProbFiles} /></label>
+                <label style={{ ...ubtn, opacity: probUploading ? 0.6 : 1, pointerEvents: probUploading ? 'none' : 'auto' }}>
+                  {probUploading ? '⏳ Subiendo...' : '📷 Adjuntar'}
+                  <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleProbFiles} disabled={probUploading} />
+                </label>
               </div>
             </div>
             <div style={mf}>

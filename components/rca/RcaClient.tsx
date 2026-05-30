@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import type { W2HData, CatData, InspData, ProbData, TLEvent, AiResult } from './types'
+import type { W2HData, CatData, InspData, ProbData, TLEvent, AiResult, CanvasImage } from './types'
 import { EMPTY_W2H, emptyCatData } from './types'
 import RcaW2HForm   from './RcaW2HForm'
 import RcaIshikawa  from './RcaIshikawa'
@@ -11,6 +11,21 @@ import RcaHistory   from './RcaHistory'
 interface Props { userName: string }
 
 const genId = () => Math.random().toString(36).slice(2, 9)
+
+/** Reconstruct CanvasImage array from persisted public URLs */
+function loadImages(urls: string[]): Promise<CanvasImage[]> {
+  return Promise.all(
+    (urls ?? []).map(src =>
+      new Promise<CanvasImage>(resolve => {
+        const el = new Image()
+        el.crossOrigin = 'anonymous'
+        el.onload  = () => resolve({ src, el })
+        el.onerror = () => resolve({ src, el })   // keep broken ref; canvas handles it gracefully
+        el.src = src
+      })
+    )
+  )
+}
 
 // ─── KIRA palette tokens ──────────────────────────────────────────────────────
 const C = {
@@ -53,12 +68,12 @@ export default function RcaClient({ userName: _userName }: Props) {
     setStep(1)
   }
 
-  /** Load a saved analysis from history */
+  /** Load a saved analysis from history, including reconstructing images from permanent URLs */
   async function loadAnalysis(id: string) {
     setLoadingHist(true)
     setShowHistory(false)
     try {
-      const res  = await fetch(`/api/rca/${id}`)
+      const res = await fetch(`/api/rca/${id}`)
       if (!res.ok) throw new Error('No encontrado')
       const saved = await res.json()
 
@@ -68,24 +83,30 @@ export default function RcaClient({ userName: _userName }: Props) {
         ...(saved.w2h ?? {}),
       }
 
-      const loadedCats: CatData[] = (saved.cat_data ?? []).map(
-        (d: { text?: string; causes?: string[] }) => ({
-          text:   d.text   ?? '',
-          causes: d.causes ?? [],
-          images: [],          // images are ephemeral — not persisted
-        })
+      // Reconstruct CatData — load images in parallel across all 9 categories
+      const loadedCats: CatData[] = await Promise.all(
+        (saved.cat_data ?? []).map(
+          async (d: { text?: string; causes?: string[]; image_urls?: string[] }) => ({
+            text:   d.text   ?? '',
+            causes: d.causes ?? [],
+            images: await loadImages(d.image_urls ?? []),
+          })
+        )
       )
-      // Pad to 9 categories if shorter
+      // Pad to 9 categories if the saved data is shorter
       while (loadedCats.length < 9) loadedCats.push(emptyCatData())
+
+      // Reconstruct inspector images
+      const inspImages = await loadImages(saved.insp_image_urls ?? [])
 
       setW2H(loadedW2H)
       setCatData(loadedCats)
-      setInspData({ text: saved.insp_text ?? '', images: [] })
+      setInspData({ text: saved.insp_text ?? '', images: inspImages })
       setProbData({ w2h: loadedW2H, images: [] })
       setEvents(saved.events ?? [])
       setAiData(saved.ai_result ?? null)
       setAnalysisId(id)
-      setStep(3)          // jump straight to AI panel
+      setStep(3)
     } catch {
       alert('Error al cargar el análisis')
     } finally {
