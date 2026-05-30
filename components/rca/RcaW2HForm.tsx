@@ -3,6 +3,19 @@
 import { useState } from 'react'
 import type { W2HData } from './types'
 
+// ─── KIRA palette tokens ──────────────────────────────────────────────────────
+const C = {
+  pageBg:    '#020617',  // slate-950
+  cardBg:    '#0f172a',  // slate-900
+  surfaceBg: '#1e293b',  // slate-800
+  border:    '#334155',  // slate-700
+  accent:    '#0ea5e9',  // sky-500
+  accentDk:  '#0284c7',  // sky-600 (hover)
+  textPri:   '#f1f5f9',  // slate-100
+  textSec:   '#94a3b8',  // slate-400
+  textMut:   '#64748b',  // slate-500
+}
+
 interface Props {
   w2h:      W2HData
   onSubmit: (data: W2HData) => void
@@ -28,9 +41,15 @@ export default function RcaW2HForm({ w2h, onSubmit }: Props) {
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
       <div style={card}>
         {/* Header */}
-        <div style={{ background: '#1a4faf', padding: '18px 26px', color: '#fff' }}>
-          <h1 style={{ fontSize: 19, fontWeight: 800, margin: 0 }}>🔍 Análisis de Causa Raíz</h1>
-          <p style={{ fontSize: 12, opacity: 0.8, margin: '3px 0 0' }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #0c4a6e 0%, #0369a1 100%)',
+          padding: '18px 26px',
+          borderBottom: `1px solid ${C.border}`,
+        }}>
+          <h1 style={{ fontSize: 19, fontWeight: 800, margin: 0, color: C.textPri }}>
+            🔍 Análisis de Causa Raíz
+          </h1>
+          <p style={{ fontSize: 12, color: C.textSec, margin: '3px 0 0' }}>
             Sinergy Consultant — HSEyQ · Patagonia, Argentina
           </p>
         </div>
@@ -76,7 +95,7 @@ export default function RcaW2HForm({ w2h, onSubmit }: Props) {
         </div>
 
         {/* Footer */}
-        <div style={{ padding: '14px 26px', borderTop: '1px solid #f0f0f0', display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ padding: '14px 26px', borderTop: `1px solid ${C.border}`, display: 'flex', justifyContent: 'flex-end' }}>
           <button onClick={handleSubmit} style={btnPrimary}>
             Continuar al Ishikawa →
           </button>
@@ -86,18 +105,14 @@ export default function RcaW2HForm({ w2h, onSubmit }: Props) {
   )
 }
 
-function Field({
-  label, required, children,
-}: {
-  label: string; required?: boolean; children: React.ReactNode
-}) {
+function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
       <label style={{
-        display: 'block', fontSize: 10, fontWeight: 700, color: '#555',
-        textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 4,
+        display: 'block', fontSize: 10, fontWeight: 700,
+        color: '#64748b', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 4,
       }}>
-        {label}{required && <span style={{ color: '#e53e3e' }}> *</span>}
+        {label}{required && <span style={{ color: '#f87171' }}> *</span>}
       </label>
       {children}
     </div>
@@ -107,18 +122,24 @@ function Field({
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const card: React.CSSProperties = {
-  background: '#fff', borderRadius: 16,
-  boxShadow: '0 4px 24px rgba(0,0,0,.10)',
+  background: '#0f172a',
+  border: '1px solid #334155',
+  borderRadius: 16,
+  boxShadow: '0 4px 24px rgba(0,0,0,.4)',
   width: '100%', maxWidth: 640, overflow: 'hidden',
 }
 
 const ta: React.CSSProperties = {
   width: '100%', padding: '8px 10px',
-  border: '1.5px solid #e2e8f0', borderRadius: 7,
-  fontSize: 13, fontFamily: 'inherit', resize: 'vertical', color: '#222',
+  background: '#1e293b',
+  border: '1px solid #334155',
+  borderRadius: 7,
+  fontSize: 13, fontFamily: 'inherit', resize: 'vertical',
+  color: '#f1f5f9',
+  outline: 'none',
 }
 
 const btnPrimary: React.CSSProperties = {
   fontSize: 13, padding: '8px 20px', borderRadius: 8, border: 'none',
-  cursor: 'pointer', fontWeight: 600, background: '#1a4faf', color: '#fff',
+  cursor: 'pointer', fontWeight: 600, background: '#0ea5e9', color: '#fff',
 }

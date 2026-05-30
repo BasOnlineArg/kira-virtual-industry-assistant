@@ -3,22 +3,23 @@
 export interface CatMeta {
   s:  string  // short label (canvas badge)
   l:  string  // long label (modal title, PDF)
-  c:  string  // hex color
+  c:  string  // hex color (dark-mode visible)
   b:  number  // branch position index 0-2 (maps to BX positions)
   sk: number  // spoke group index 0-2
 }
 
-/** 9 Ishikawa categories — 3 groups of 3 on 3 axis spokes */
+/** 9 Ishikawa categories — 3 groups of 3 on 3 axis spokes
+ *  Colors aligned with KIRA palette: sky-400 / emerald-400 / violet-400 */
 export const CATS: CatMeta[] = [
-  { s: 'M.Obra',   l: 'Mano de obra', c: '#185FA5', b: 0, sk: 0 },
-  { s: 'Máquina',  l: 'Máquina',      c: '#185FA5', b: 1, sk: 0 },
-  { s: 'Método',   l: 'Método',       c: '#185FA5', b: 2, sk: 0 },
-  { s: 'Material', l: 'Material',     c: '#0F6E56', b: 0, sk: 1 },
-  { s: 'Medio',    l: 'Medio amb.',   c: '#0F6E56', b: 1, sk: 1 },
-  { s: 'Gestión',  l: 'Gestión',      c: '#0F6E56', b: 2, sk: 1 },
-  { s: 'Medición', l: 'Medición',     c: '#7c3aed', b: 0, sk: 2 },
-  { s: 'Proceso',  l: 'Proceso',      c: '#7c3aed', b: 1, sk: 2 },
-  { s: 'Entorno',  l: 'Entorno',      c: '#7c3aed', b: 2, sk: 2 },
+  { s: 'M.Obra',   l: 'Mano de obra', c: '#38bdf8', b: 0, sk: 0 }, // sky-400
+  { s: 'Máquina',  l: 'Máquina',      c: '#38bdf8', b: 1, sk: 0 },
+  { s: 'Método',   l: 'Método',       c: '#38bdf8', b: 2, sk: 0 },
+  { s: 'Material', l: 'Material',     c: '#34d399', b: 0, sk: 1 }, // emerald-400
+  { s: 'Medio',    l: 'Medio amb.',   c: '#34d399', b: 1, sk: 1 },
+  { s: 'Gestión',  l: 'Gestión',      c: '#34d399', b: 2, sk: 1 },
+  { s: 'Medición', l: 'Medición',     c: '#a78bfa', b: 0, sk: 2 }, // violet-400
+  { s: 'Proceso',  l: 'Proceso',      c: '#a78bfa', b: 1, sk: 2 },
+  { s: 'Entorno',  l: 'Entorno',      c: '#a78bfa', b: 2, sk: 2 },
 ]
 
 /** Guiding questions per category index */
@@ -40,11 +41,11 @@ export interface TypeMeta {
   bg:    string
 }
 
-/** Timeline event type metadata */
+/** Timeline event type metadata — dark-mode semi-transparent backgrounds */
 export const TYPE_META: Record<string, TypeMeta> = {
-  falla:        { label: 'Falla',        color: '#dc2626', bg: '#fef2f2' },
-  alarma:       { label: 'Alarma',       color: '#ea580c', bg: '#fff7ed' },
-  condicion:    { label: 'Condición',    color: '#d97706', bg: '#fffbeb' },
-  intervencion: { label: 'Intervención', color: '#2563eb', bg: '#eff6ff' },
-  consecuencia: { label: 'Consecuencia', color: '#7c3aed', bg: '#f5f3ff' },
+  falla:        { label: 'Falla',        color: '#f87171', bg: 'rgba(239,68,68,0.12)'    }, // red-400
+  alarma:       { label: 'Alarma',       color: '#fb923c', bg: 'rgba(249,115,22,0.12)'   }, // orange-400
+  condicion:    { label: 'Condición',    color: '#fbbf24', bg: 'rgba(245,158,11,0.12)'   }, // amber-400
+  intervencion: { label: 'Intervención', color: '#38bdf8', bg: 'rgba(56,189,248,0.12)'   }, // sky-400
+  consecuencia: { label: 'Consecuencia', color: '#a78bfa', bg: 'rgba(167,139,250,0.12)'  }, // violet-400
 }
