@@ -42,26 +42,32 @@ function today() {
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface Props {
-  w2h:       W2HData
-  catData:   CatData[]
-  inspData:  InspData
-  events:    TLEvent[]
-  setEvents: React.Dispatch<React.SetStateAction<TLEvent[]>>
-  aiData:    AiResult | null
-  setAiData: React.Dispatch<React.SetStateAction<AiResult | null>>
-  onBack:    () => void
+  w2h:        W2HData
+  catData:    CatData[]
+  inspData:   InspData
+  events:     TLEvent[]
+  setEvents:  React.Dispatch<React.SetStateAction<TLEvent[]>>
+  aiData:     AiResult | null
+  setAiData:  React.Dispatch<React.SetStateAction<AiResult | null>>
+  analysisId: string | null
+  onSaved:    (id: string) => void
+  onBack:     () => void
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
+
 export default function RcaAiPanel({
-  w2h, catData, inspData, events, setEvents, aiData, setAiData, onBack,
+  w2h, catData, inspData, events, setEvents, aiData, setAiData,
+  analysisId, onSaved, onBack,
 }: Props) {
-  const [loading,  setLoading]  = useState(false)
-  const [error,    setError]    = useState('')
-  const [showForm, setShowForm] = useState(false)
-  const [editId,   setEditId]   = useState<string | null>(null)
-  const [evForm,   setEvForm]   = useState({ dt: '', type: 'condicion', desc: '', resp: '' })
-  const [dragSrc,  setDragSrc]  = useState<number | null>(null)
+  const [loading,    setLoading]    = useState(false)
+  const [error,      setError]      = useState('')
+  const [showForm,   setShowForm]   = useState(false)
+  const [editId,     setEditId]     = useState<string | null>(null)
+  const [evForm,     setEvForm]     = useState({ dt: '', type: 'condicion', desc: '', resp: '' })
+  const [dragSrc,    setDragSrc]    = useState<number | null>(null)
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
   const pdfRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { if (!aiData) runAI() }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -140,6 +146,43 @@ export default function RcaAiPanel({
       return arr
     }); setDragSrc(null)
   }
+
+  // ── Save ──────────────────────────────────────────────────────────────────
+  const saveAnalysis = useCallback(async () => {
+    setSaveStatus('saving')
+    try {
+      // Strip non-serializable image objects — only persist text + causes
+      const serCat = catData.map(({ text, causes }) => ({ text, causes }))
+
+      const payload = {
+        title:     w2h.what.trim() || 'Análisis sin título',
+        nro:       w2h.nro || '',
+        w2h,
+        cat_data:  serCat,
+        insp_text: inspData.text,
+        events,
+        ai_result: aiData,
+      }
+
+      const method = analysisId ? 'PUT' : 'POST'
+      const url    = analysisId ? `/api/rca/${analysisId}` : '/api/rca'
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+      const saved = await res.json()
+      onSaved(saved.id ?? analysisId!)
+      setSaveStatus('saved')
+      setTimeout(() => setSaveStatus('idle'), 3000)
+    } catch {
+      setSaveStatus('error')
+      setTimeout(() => setSaveStatus('idle'), 3000)
+    }
+  }, [w2h, catData, inspData, events, aiData, analysisId, onSaved])
 
   // ── PDF ───────────────────────────────────────────────────────────────────
   const generatePDF = useCallback(() => {
@@ -452,7 +495,29 @@ export default function RcaAiPanel({
         {(aiData || error) && (
           <div style={{ padding: '14px 22px', borderTop: `1px solid ${K.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <button onClick={runAI} style={btnGhost}>↺ Regenerar</button>
-            <button onClick={generatePDF} style={btnPrimary}>📄 Generar informe PDF</button>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              {/* Save button */}
+              <button
+                onClick={saveAnalysis}
+                disabled={saveStatus === 'saving'}
+                style={{
+                  ...btnGhost,
+                  borderColor:
+                    saveStatus === 'saved'  ? '#34d399' :
+                    saveStatus === 'error'  ? '#ef4444' : '#0ea5e9',
+                  color:
+                    saveStatus === 'saved'  ? '#34d399' :
+                    saveStatus === 'error'  ? '#ef4444' : '#0ea5e9',
+                  opacity: saveStatus === 'saving' ? 0.6 : 1,
+                }}
+              >
+                {saveStatus === 'saving' ? '⏳ Guardando...' :
+                 saveStatus === 'saved'  ? '✓ Guardado' :
+                 saveStatus === 'error'  ? '✕ Error' :
+                 analysisId              ? '💾 Actualizar' : '💾 Guardar análisis'}
+              </button>
+              <button onClick={generatePDF} style={btnPrimary}>📄 Generar informe PDF</button>
+            </div>
           </div>
         )}
       </div>
