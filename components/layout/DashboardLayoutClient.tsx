@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import NextImage from 'next/image'
 import { usePathname } from 'next/navigation'
 import {
   Menu, Home, Brain, LayoutDashboard, ClipboardList, Bell,
@@ -67,11 +68,12 @@ export default function DashboardLayoutClient({ user, children }: Props) {
             <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full overflow-hidden ring-1 ring-sky-500/30 flex-shrink-0">
-              <img
+            <div className="relative w-7 h-7 rounded-full overflow-hidden ring-1 ring-sky-500/30 flex-shrink-0">
+              <NextImage
                 src="/kira-avatar-2.jpg"
                 alt="KIRA"
-                className="w-full h-full object-cover object-top"
+                fill
+                className="object-cover object-top"
               />
             </div>
             <span className="text-sm font-bold text-white tracking-wide">KIRA</span>

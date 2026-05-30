@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { FileText, Image, Upload, Trash2, Eye, Printer, X, Search, Tag, ChevronDown } from 'lucide-react'
+import { FileText, Image as ImageIcon, Upload, Trash2, Eye, Printer, X, Search, Tag, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface Report {
@@ -181,7 +181,7 @@ export default function ReportsLibrary({ reports, onUpload, onDelete }: ReportsL
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900/50 border border-slate-700">
               {pendingFile.tipo === 'pdf'
                 ? <FileText className="w-4 h-4 text-red-400 shrink-0" />
-                : <Image className="w-4 h-4 text-sky-400 shrink-0" />}
+                : <ImageIcon className="w-4 h-4 text-sky-400 shrink-0" />}
               <p className="text-xs text-slate-300 truncate">{pendingFile.file.name}</p>
               <span className="ml-auto text-[10px] text-slate-500">
                 {(pendingFile.file.size / 1024 / 1024).toFixed(1)} MB
@@ -322,7 +322,7 @@ export default function ReportsLibrary({ reports, onUpload, onDelete }: ReportsL
             >
               {r.tipo === 'pdf'
                 ? <FileText className="w-5 h-5 text-red-400 shrink-0" />
-                : <Image className="w-5 h-5 text-sky-400 shrink-0" />}
+                : <ImageIcon className="w-5 h-5 text-sky-400 shrink-0" />}
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-medium text-slate-200 truncate">{r.nombre}</p>
                 <div className="flex items-center gap-2 mt-0.5">
@@ -400,7 +400,7 @@ export default function ReportsLibrary({ reports, onUpload, onDelete }: ReportsL
             <div className="flex items-center gap-3">
               {viewer.tipo === 'pdf'
                 ? <FileText className="w-4 h-4 text-red-400" />
-                : <Image className="w-4 h-4 text-sky-400" />}
+                : <ImageIcon className="w-4 h-4 text-sky-400" />}
               <div>
                 <p className="text-sm font-semibold text-slate-200">{viewer.nombre}</p>
                 {viewer.asset_tag && (
@@ -444,6 +444,7 @@ export default function ReportsLibrary({ reports, onUpload, onDelete }: ReportsL
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center p-4 overflow-auto">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={viewer.url}
                   alt={viewer.nombre}

@@ -308,6 +308,7 @@ export default function InspectionResult({ result }: { result: StructuralResult 
           <div className="grid grid-cols-4 gap-2">
             {result.photos.map((url, i) => (
               <div key={i} className="relative group aspect-square rounded-lg overflow-hidden bg-slate-800">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={url} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
                 <button
                   onClick={() => setPhotoPreview(url)}
@@ -351,6 +352,7 @@ export default function InspectionResult({ result }: { result: StructuralResult 
           className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
           onClick={() => setPhotoPreview(null)}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={photoPreview} alt="Foto de campo"
             className="max-w-full max-h-full rounded-xl shadow-2xl"

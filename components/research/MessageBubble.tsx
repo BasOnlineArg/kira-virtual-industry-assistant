@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { User } from 'lucide-react'
 import type { ChatMessage } from '@/lib/types'
 
@@ -102,15 +103,14 @@ function MarkdownContent({ content }: { content: string }) {
 function KiraAvatar() {
   return (
     <div
-      className="flex-shrink-0 overflow-hidden rounded-full ring-2 ring-sky-500/30 bg-slate-800"
+      className="relative flex-shrink-0 overflow-hidden rounded-full ring-2 ring-sky-500/30 bg-slate-800"
       style={{ width: 60, height: 60 }}
     >
-      <img
+      <Image
         src="/kira-avatar-2.jpg"
         alt="KIRA"
-        width={60}
-        height={60}
-        className="w-full h-full object-cover object-top"
+        fill
+        className="object-cover object-top"
         onError={(e) => {
           const parent = e.currentTarget.parentElement
           if (parent) {

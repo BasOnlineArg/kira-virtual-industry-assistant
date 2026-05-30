@@ -56,6 +56,7 @@ export default function FieldPhotos({ photos, onChange, disabled }: FieldPhotosP
         <div className="grid grid-cols-4 gap-2">
           {photos.map((src, idx) => (
             <div key={idx} className="relative group aspect-square rounded-lg overflow-hidden bg-slate-800">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={src} alt={`Foto ${idx + 1}`} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
                 <button
@@ -107,6 +108,7 @@ export default function FieldPhotos({ photos, onChange, disabled }: FieldPhotosP
           className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
           onClick={() => setPreview(null)}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={preview}
             alt="Preview"

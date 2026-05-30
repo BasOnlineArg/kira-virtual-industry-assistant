@@ -194,6 +194,7 @@ export default function AnalysisHistory({ items, onSelect, activeId }: AnalysisH
                   {/* Thumbnail */}
                   <div className="w-14 h-14 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0">
                     {item.foto_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={item.foto_url}
                         alt={item.asset_tag ?? ''}

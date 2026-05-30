@@ -99,6 +99,7 @@ export default function UndergroundMap({
         }}
       >
         {/* Mine plan image */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           ref={imageRef}
           src={mapSrc}

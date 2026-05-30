@@ -25,6 +25,7 @@ import {
   CalendarRange,
   type LucideIcon,
 } from 'lucide-react'
+import Image from 'next/image'
 import { logout } from '@/app/actions/auth'
 import { cn } from '@/lib/utils'
 import type { KiraUser } from '@/lib/types'
@@ -136,15 +137,14 @@ export default function Sidebar({ user, isMobileOpen = false, onMobileClose }: S
           className={cn('flex items-center gap-3 flex-shrink-0', collapsed && 'justify-center')}
         >
           <div
-            className="rounded-xl overflow-hidden shadow-lg shadow-sky-600/30 flex-shrink-0 ring-1 ring-sky-500/30"
+            className="relative rounded-xl overflow-hidden shadow-lg shadow-sky-600/30 flex-shrink-0 ring-1 ring-sky-500/30"
             style={{ width: 72, height: 72 }}
           >
-            <img
+            <Image
               src="/kira-avatar-2.jpg"
               alt="KIRA"
-              width={72}
-              height={72}
-              className="w-full h-full object-cover object-top"
+              fill
+              className="object-cover object-top"
             />
           </div>
           {!collapsed && (

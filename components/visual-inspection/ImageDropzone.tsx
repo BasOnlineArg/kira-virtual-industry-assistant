@@ -55,6 +55,7 @@ export default function ImageDropzone({
   if (preview) {
     return (
       <div className="relative rounded-xl overflow-hidden border border-slate-700/50 bg-slate-900">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={preview}
           alt="Preview"
