@@ -128,7 +128,7 @@ const modules: ModuleCard[] = [
     href: '/rca',
     icon: GitBranch,
     label: 'Análisis RCA',
-    description: 'Ishikawa 6M + 5 Porqués + análisis IA. Informe con causa raíz, acciones correctivas y línea de tiempo.',
+    description: 'Diagrama Ishikawa 3D con 9 categorías + análisis IA. Causa raíz, acciones correctivas, línea de tiempo e informe PDF.',
     status: 'complete',
   },
   {
